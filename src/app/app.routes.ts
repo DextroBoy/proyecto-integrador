@@ -6,7 +6,6 @@ import {AdminPage} from './pages/admin/admin.page';
 import {AgentPage} from './pages/agent/agent.page'; 
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginPage },
   { path: 'register', component: RegisterPage },
   { path: 'client', component: ClientPage },

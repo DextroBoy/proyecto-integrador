@@ -1,0 +1,148 @@
+/* ===== Colores ===== */
+$fondo: #f5f6f8;
+$azul: #1d4e89;
+$gris: #616e7c;
+$borde: #dddddd;
+$verde: #1b7f4d;
+$naranja: #9a6700;
+$rojo: #b42318;
+
+/* ===== Estructura general ===== */
+#encabezado-agente,
+#contenido-agente,
+#pie-agente {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+#encabezado-agente p {
+  color: $gris;
+}
+
+#contenido-agente {
+  background-color: $fondo;
+}
+
+section {
+  margin-bottom: 40px;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid $borde;
+  border-radius: 8px;
+}
+
+h2 {
+  margin-top: 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid $azul;
+}
+
+/* ===== Formulario (Grid de 2 columnas) ===== */
+#formulario-evento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.campo label {
+  display: block;
+  margin-bottom: 5px;
+  color: $gris;
+}
+
+.campo input,
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 8px;
+  box-sizing: border-box;
+  border: 1px solid $borde;
+  border-radius: 4px;
+  font-family: Arial, sans-serif;
+}
+
+.campo-ancho {
+  grid-column: 1 / 3;
+}
+
+/* ===== Botones ===== */
+button {
+  padding: 8px 16px;
+  background-color: $azul;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #163a66;
+}
+
+/* ===== Tablas ===== */
+.contenedor-tabla {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid $borde;
+}
+
+th {
+  color: $gris;
+}
+
+td input,
+td select {
+  padding: 4px;
+}
+
+/* ===== Estados del evento y de la reserva ===== */
+.estado-programado {
+  color: $azul;
+  font-weight: bold;
+}
+
+.estado-en-boleteria,
+.estado-confirmada {
+  color: $verde;
+  font-weight: bold;
+}
+
+.estado-reservada {
+  color: $naranja;
+  font-weight: bold;
+}
+
+.estado-cancelado,
+.estado-cancelada {
+  color: $rojo;
+  font-weight: bold;
+}
+
+/* ===== Pie de página ===== */
+#pie-agente {
+  color: $gris;
+  text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 800px) {
+  #formulario-evento {
+    grid-template-columns: 1fr;
+  }
+
+  .campo-ancho {
+    grid-column: 1 / 2;
+  }
+}

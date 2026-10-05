@@ -1,0 +1,135 @@
+/* ===== Colores ===== */
+$fondo: #f5f6f8;
+$azul: #1d4e89;
+$gris: #616e7c;
+$borde: #dddddd;
+$verde: #1b7f4d;
+$naranja: #9a6700;
+$rojo: #b42318;
+
+/* ===== Estructura general ===== */
+#encabezado-admin,
+#contenido-admin,
+#pie-admin {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+#encabezado-admin p {
+  color: $gris;
+}
+
+#contenido-admin {
+  background-color: $fondo;
+}
+
+section {
+  margin-bottom: 40px;
+}
+
+h2 {
+  padding-bottom: 8px;
+  border-bottom: 2px solid $azul;
+}
+
+/* ===== Tarjetas (Flexbox) ===== */
+.tarjetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.tarjeta {
+  flex: 1;
+  min-width: 150px;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid $borde;
+  border-left: 4px solid $azul;
+  border-radius: 8px;
+}
+
+.tarjeta-nombre {
+  margin: 0;
+  color: $gris;
+}
+
+.tarjeta-numero {
+  margin: 5px 0 0 0;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+/* ===== Reportes (Grid de 2 columnas) ===== */
+.reportes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.reporte {
+  padding: 15px;
+  background-color: white;
+  border: 1px solid $borde;
+  border-radius: 8px;
+}
+
+.reporte-ancho {
+  grid-column: 1 / 3;
+}
+
+/* ===== Tablas ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid $borde;
+}
+
+th {
+  color: $gris;
+}
+
+tfoot td {
+  font-weight: bold;
+}
+
+/* ===== Estados de la reserva ===== */
+.estado-confirmada {
+  color: $verde;
+  font-weight: bold;
+}
+
+.estado-reservada {
+  color: $naranja;
+  font-weight: bold;
+}
+
+.estado-cancelada {
+  color: $rojo;
+  font-weight: bold;
+}
+
+/* ===== Pie de página ===== */
+#pie-admin {
+  color: $gris;
+  text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 800px) {
+  .reportes {
+    grid-template-columns: 1fr;
+  }
+
+  .reporte-ancho {
+    grid-column: 1 / 2;
+  }
+}

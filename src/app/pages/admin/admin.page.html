@@ -1,1 +1,254 @@
-<p>admin.page works!</p>
+<header id="encabezado-admin">
+  <h1>Panel de administración</h1>
+  <p>Reportes del sistema de eventos</p>
+</header>
+
+<main id="contenido-admin">
+
+  <!-- REGISTROS DEL SISTEMA -->
+  <section id="seccion-registros">
+    <h2>Registros del sistema</h2>
+    <div class="tarjetas">
+      <article class="tarjeta" id="tarjeta-clientes">
+        <p class="tarjeta-nombre">Clientes</p>
+        <p class="tarjeta-numero">128</p>
+      </article>
+      <article class="tarjeta" id="tarjeta-agentes">
+        <p class="tarjeta-nombre">Agentes</p>
+        <p class="tarjeta-numero">12</p>
+      </article>
+      <article class="tarjeta" id="tarjeta-administradores">
+        <p class="tarjeta-nombre">Administradores</p>
+        <p class="tarjeta-numero">3</p>
+      </article>
+      <article class="tarjeta" id="tarjeta-reservas">
+        <p class="tarjeta-nombre">Reservas</p>
+        <p class="tarjeta-numero">342</p>
+      </article>
+      <article class="tarjeta" id="tarjeta-eventos">
+        <p class="tarjeta-nombre">Eventos</p>
+        <p class="tarjeta-numero">27</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- REPORTES COMERCIALES -->
+  <section id="seccion-comercial">
+    <h2>Reportes comerciales</h2>
+    <div class="reportes">
+
+      <article class="reporte" id="reporte-ingresos-por-mes">
+        <h3>Ingresos totales por mes (2026)</h3>
+        <canvas id="grafica-ingresos-por-mes"></canvas>
+      </article>
+
+      <article class="reporte" id="reporte-reservas-por-evento">
+        <h3>Reservas por evento y por mes (2026)</h3>
+        <canvas id="grafica-reservas-por-evento"></canvas>
+      </article>
+
+      <article class="reporte" id="reporte-ingresos-por-agente">
+        <h3>Promedio de ingresos por agente</h3>
+        <table id="tabla-ingresos-por-agente">
+          <thead>
+            <tr>
+              <th>Agente</th>
+              <th>Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Laura Gómez</td>
+              <td>$ 4.250.000</td>
+            </tr>
+            <tr>
+              <td>Carlos Ruiz</td>
+              <td>$ 3.870.000</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="reporte" id="reporte-ingresos-por-cliente">
+        <h3>Promedio de ingresos por cliente</h3>
+        <table id="tabla-ingresos-por-cliente">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Promedio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Juan Pérez</td>
+              <td>$ 320.000</td>
+            </tr>
+            <tr>
+              <td>Ana Torres</td>
+              <td>$ 280.000</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="reporte reporte-ancho" id="reporte-eventos-por-agente">
+        <h3>Eventos creados por agente y por ciudad</h3>
+        <table id="tabla-eventos-por-agente">
+          <thead>
+            <tr>
+              <th>Agente</th>
+              <th>Ciudad</th>
+              <th>Eventos creados</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Laura Gómez</td>
+              <td>Cali</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>Carlos Ruiz</td>
+              <td>Tuluá</td>
+              <td>4</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">Total de eventos</td>
+              <td>10</td>
+            </tr>
+          </tfoot>
+        </table>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- COBERTURA DE EVENTOS -->
+  <section id="seccion-cobertura">
+    <h2>Cobertura de eventos</h2>
+    <article class="reporte reporte-ancho" id="reporte-eventos-por-ubicacion">
+      <h3>Eventos por país, departamento y ciudad</h3>
+      <table id="tabla-eventos-por-ubicacion">
+        <thead>
+          <tr>
+            <th>Evento</th>
+            <th>País</th>
+            <th>Departamento</th>
+            <th>Ciudad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Concierto de rock</td>
+            <td>Colombia</td>
+            <td>Valle del Cauca</td>
+            <td>Cali</td>
+          </tr>
+          <tr>
+            <td>Festival de teatro</td>
+            <td>Colombia</td>
+            <td>Valle del Cauca</td>
+            <td>Tuluá</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </section>
+
+  <!-- RESERVAS Y OPERACIÓN -->
+  <section id="seccion-operacion">
+    <h2>Reservas y operación</h2>
+    <div class="reportes">
+
+      <article class="reporte reporte-ancho" id="reporte-historial-reservas">
+        <h3>Historial de reservas por cliente</h3>
+        <table id="tabla-historial-reservas">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Evento</th>
+              <th>Fecha</th>
+              <th>Entradas</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Juan Pérez</td>
+              <td>Concierto de rock</td>
+              <td>2026-03-12</td>
+              <td>2</td>
+              <td class="estado-confirmada">Confirmada</td>
+            </tr>
+            <tr>
+              <td>Ana Torres</td>
+              <td>Festival de teatro</td>
+              <td>2026-04-02</td>
+              <td>4</td>
+              <td class="estado-reservada">Reservada</td>
+            </tr>
+            <tr>
+              <td>Luis Mejía</td>
+              <td>Noche de comedia</td>
+              <td>2026-05-20</td>
+              <td>1</td>
+              <td class="estado-cancelada">Cancelada</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="reporte" id="reporte-reservas-canceladas">
+        <h3>Reservas canceladas y su causa</h3>
+        <table id="tabla-reservas-canceladas">
+          <thead>
+            <tr>
+              <th>Reserva</th>
+              <th>Causa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>RES-0045</td>
+              <td>El cliente no pudo asistir</td>
+            </tr>
+            <tr>
+              <td>RES-0112</td>
+              <td>Pago no realizado</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <article class="reporte" id="reporte-eventos-cancelados">
+        <h3>Eventos cancelados y su causa</h3>
+        <table id="tabla-eventos-cancelados">
+          <thead>
+            <tr>
+              <th>Evento</th>
+              <th>Causa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Festival de jazz</td>
+              <td>Mal clima</td>
+            </tr>
+            <tr>
+              <td>Obra infantil</td>
+              <td>Pocas entradas vendidas</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+<footer id="pie-admin">
+  <p>© 2026 Proyecto Integrador - Gestión de eventos</p>
+</footer>
