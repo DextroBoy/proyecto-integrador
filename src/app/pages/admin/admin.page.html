@@ -35,8 +35,8 @@
   <!-- REPORTES COMERCIALES -->
   <section id="seccion-comercial">
     <h2>Reportes comerciales</h2>
-    <div class="reportes">
 
+    <div class="reportes">
       <article class="reporte" id="reporte-ingresos-por-mes">
         <h3>Ingresos totales por mes (2026)</h3>
         <canvas id="grafica-ingresos-por-mes"></canvas>
@@ -49,7 +49,7 @@
 
       <article class="reporte" id="reporte-ingresos-por-agente">
         <h3>Promedio de ingresos por agente</h3>
-        <table id="tabla-ingresos-por-agente">
+        <table border="1" id="tabla-ingresos-por-agente">
           <thead>
             <tr>
               <th>Agente</th>
@@ -71,7 +71,7 @@
 
       <article class="reporte" id="reporte-ingresos-por-cliente">
         <h3>Promedio de ingresos por cliente</h3>
-        <table id="tabla-ingresos-por-cliente">
+        <table border="1" id="tabla-ingresos-por-cliente">
           <thead>
             <tr>
               <th>Cliente</th>
@@ -90,47 +90,46 @@
           </tbody>
         </table>
       </article>
-
-      <article class="reporte reporte-ancho" id="reporte-eventos-por-agente">
-        <h3>Eventos creados por agente y por ciudad</h3>
-        <table id="tabla-eventos-por-agente">
-          <thead>
-            <tr>
-              <th>Agente</th>
-              <th>Ciudad</th>
-              <th>Eventos creados</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Laura Gómez</td>
-              <td>Cali</td>
-              <td>6</td>
-            </tr>
-            <tr>
-              <td>Carlos Ruiz</td>
-              <td>Tuluá</td>
-              <td>4</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td colspan="2">Total de eventos</td>
-              <td>10</td>
-            </tr>
-          </tfoot>
-        </table>
-      </article>
-
     </div>
+
+    <article class="reporte reporte-solo" id="reporte-eventos-por-agente">
+      <h3>Eventos creados por agente y por ciudad</h3>
+      <table border="1" id="tabla-eventos-por-agente">
+        <thead>
+          <tr>
+            <th>Agente</th>
+            <th>Ciudad</th>
+            <th>Eventos creados</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Laura Gómez</td>
+            <td>Cali</td>
+            <td>6</td>
+          </tr>
+          <tr>
+            <td>Carlos Ruiz</td>
+            <td>Tuluá</td>
+            <td>4</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2">Total de eventos</td>
+            <td>10</td>
+          </tr>
+        </tfoot>
+      </table>
+    </article>
   </section>
 
   <!-- COBERTURA DE EVENTOS -->
   <section id="seccion-cobertura">
     <h2>Cobertura de eventos</h2>
-    <article class="reporte reporte-ancho" id="reporte-eventos-por-ubicacion">
+    <article class="reporte" id="reporte-eventos-por-ubicacion">
       <h3>Eventos por país, departamento y ciudad</h3>
-      <table id="tabla-eventos-por-ubicacion">
+      <table border="1" id="tabla-eventos-por-ubicacion">
         <thead>
           <tr>
             <th>Evento</th>
@@ -160,49 +159,49 @@
   <!-- RESERVAS Y OPERACIÓN -->
   <section id="seccion-operacion">
     <h2>Reservas y operación</h2>
-    <div class="reportes">
 
-      <article class="reporte reporte-ancho" id="reporte-historial-reservas">
-        <h3>Historial de reservas por cliente</h3>
-        <table id="tabla-historial-reservas">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Evento</th>
-              <th>Fecha</th>
-              <th>Entradas</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Juan Pérez</td>
-              <td>Concierto de rock</td>
-              <td>2026-03-12</td>
-              <td>2</td>
-              <td class="estado-confirmada">Confirmada</td>
-            </tr>
-            <tr>
-              <td>Ana Torres</td>
-              <td>Festival de teatro</td>
-              <td>2026-04-02</td>
-              <td>4</td>
-              <td class="estado-reservada">Reservada</td>
-            </tr>
-            <tr>
-              <td>Luis Mejía</td>
-              <td>Noche de comedia</td>
-              <td>2026-05-20</td>
-              <td>1</td>
-              <td class="estado-cancelada">Cancelada</td>
-            </tr>
-          </tbody>
-        </table>
-      </article>
+    <article class="reporte" id="reporte-historial-reservas">
+      <h3>Historial de reservas por cliente</h3>
+      <table border="1" id="tabla-historial-reservas">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Evento</th>
+            <th>Fecha</th>
+            <th>Entradas</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Juan Pérez</td>
+            <td>Concierto de rock</td>
+            <td>2026-03-12</td>
+            <td>2</td>
+            <td class="estado-confirmada">Confirmada</td>
+          </tr>
+          <tr>
+            <td>Ana Torres</td>
+            <td>Festival de teatro</td>
+            <td>2026-04-02</td>
+            <td>4</td>
+            <td class="estado-reservada">Reservada</td>
+          </tr>
+          <tr>
+            <td>Luis Mejía</td>
+            <td>Noche de comedia</td>
+            <td>2026-05-20</td>
+            <td>1</td>
+            <td class="estado-cancelada">Cancelada</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
 
+    <div class="reportes reporte-solo">
       <article class="reporte" id="reporte-reservas-canceladas">
         <h3>Reservas canceladas y su causa</h3>
-        <table id="tabla-reservas-canceladas">
+        <table border="1" id="tabla-reservas-canceladas">
           <thead>
             <tr>
               <th>Reserva</th>
@@ -224,7 +223,7 @@
 
       <article class="reporte" id="reporte-eventos-cancelados">
         <h3>Eventos cancelados y su causa</h3>
-        <table id="tabla-eventos-cancelados">
+        <table border="1" id="tabla-eventos-cancelados">
           <thead>
             <tr>
               <th>Evento</th>
@@ -243,7 +242,6 @@
           </tbody>
         </table>
       </article>
-
     </div>
   </section>
 
