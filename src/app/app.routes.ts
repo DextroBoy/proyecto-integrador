@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
-import {LoginPage} from './pages/login/login.page'; 
-import {RegisterPage} from './pages/register/register.page';
+import {LoginPage} from './pages/auth/login/login.page'; 
+import {RegisterPage} from './pages/auth/register/register.page';
 import {ClientPage} from './pages/client/client.page';
 import {AdminPage} from './pages/admin/admin.page';
 import {AgentPage} from './pages/agent/agent.page'; 
