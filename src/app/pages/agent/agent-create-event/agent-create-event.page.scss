@@ -1,0 +1,57 @@
+section {
+    margin: 20px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid gray;
+}
+
+h2 {
+    font-size: 28px;
+    color: darkblue;
+}
+
+/* ===== Formulario (Grid de 2 columnas) ===== */
+.campos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.campo {
+    margin: 10px;
+}
+
+label {
+    display: block;
+    color: gray;
+}
+
+input {
+    padding: 8px;
+    border: 1px solid gray;
+}
+
+select {
+    padding: 8px;
+    border: 1px solid gray;
+}
+
+textarea {
+    width: 90%;
+    padding: 8px;
+    border: 1px solid gray;
+}
+
+button {
+    padding: 10px;
+    background-color: darkblue;
+    color: white;
+    border: 1px solid darkblue;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:768px) {
+    .campos {
+        grid-template-columns: 1fr;
+    }
+}

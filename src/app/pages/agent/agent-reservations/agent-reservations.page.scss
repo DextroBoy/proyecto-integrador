@@ -1,0 +1,62 @@
+section {
+    margin: 20px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid gray;
+}
+
+h2 {
+    font-size: 28px;
+    color: darkblue;
+}
+
+/* ===== Tabla ===== */
+table {
+    width: 100%;
+}
+
+th {
+    padding: 8px;
+    text-align: left;
+    color: darkblue;
+}
+
+td {
+    padding: 8px;
+    text-align: left;
+}
+
+input {
+    padding: 4px;
+}
+
+select {
+    padding: 4px;
+}
+
+button {
+    padding: 8px;
+    background-color: darkblue;
+    color: white;
+    border: 1px solid darkblue;
+}
+
+/* ===== Estados de la reserva ===== */
+.estado-reservada {
+    color: orange;
+}
+
+.estado-confirmada {
+    color: green;
+}
+
+.estado-cancelada {
+    color: red;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:768px) {
+    table {
+        font-size: 12px;
+    }
+}

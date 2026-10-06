@@ -1,4 +1,3 @@
-/* ===== Estructura general ===== */
 #encabezado-agente {
     padding: 20px;
     font-family: Arial;
@@ -22,105 +21,23 @@ h1 {
     color: darkblue;
 }
 
-h2 {
-    font-size: 28px;
-    color: darkblue;
-}
-
-section {
-    margin: 20px;
-    padding: 15px;
-    background-color: white;
+#menu-agente {
+    display: flex;
+    justify-content: space-around;
     border: 1px solid gray;
 }
 
-/* ===== Formulario (Grid de 2 columnas) ===== */
-.campos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.campo {
-    margin: 10px;
-}
-
-label {
-    display: block;
-    color: gray;
-}
-
-input {
-    padding: 8px;
-    border: 1px solid gray;
-}
-
-select {
-    padding: 8px;
-    border: 1px solid gray;
-}
-
-textarea {
-    width: 90%;
-    padding: 8px;
-    border: 1px solid gray;
-}
-
-button {
+#menu-agente a {
     padding: 10px;
-    background-color: darkblue;
-    color: white;
-    border: 1px solid darkblue;
-}
-
-/* ===== Tablas ===== */
-table {
-    width: 100%;
-}
-
-th {
-    padding: 8px;
-    text-align: left;
     color: darkblue;
 }
 
-td {
-    padding: 8px;
-    text-align: left;
-}
-
-/* ===== Estados del evento y de la reserva ===== */
-.estado-programado {
-    color: blue;
-}
-
-.estado-en-boleteria {
-    color: green;
-}
-
-.estado-confirmada {
-    color: green;
-}
-
-.estado-reservada {
-    color: orange;
-}
-
-.estado-cancelado {
-    color: red;
-}
-
-.estado-cancelada {
-    color: red;
-}
-
-/* ===== Responsive ===== */
 @media(max-width:768px) {
-    .campos {
-        grid-template-columns: 1fr;
+    #menu-agente {
+        display: block;
     }
 
-    table {
-        font-size: 12px;
+    #menu-agente a {
+        display: block;
     }
 }

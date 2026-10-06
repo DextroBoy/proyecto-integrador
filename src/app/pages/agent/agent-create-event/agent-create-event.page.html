@@ -1,0 +1,75 @@
+<section id="seccion-registrar-evento">
+  <h2>Registrar evento</h2>
+
+  <form id="formulario-evento">
+    <div class="campos">
+      <div class="campo">
+        <label for="codigo-evento">Código del evento:</label>
+        <input type="text" id="codigo-evento" name="codigo-evento" required>
+      </div>
+
+      <div class="campo">
+        <label for="nombre-evento">Nombre del evento:</label>
+        <input type="text" id="nombre-evento" name="nombre-evento" required>
+      </div>
+
+      <div class="campo">
+        <label for="teatro-evento">Teatro:</label>
+        <input type="text" id="teatro-evento" name="teatro-evento" required>
+      </div>
+
+      <div class="campo">
+        <label for="ciudad-evento">Ciudad de realización:</label>
+        <select id="ciudad-evento" name="ciudad-evento" required>
+          <option value="">Seleccione una ciudad</option>
+          <option value="cali">Cali</option>
+          <option value="tulua">Tuluá</option>
+          <option value="bogota">Bogotá</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="inicio-evento">Fecha y hora de inicio:</label>
+        <input type="datetime-local" id="inicio-evento" name="inicio-evento" required>
+      </div>
+
+      <div class="campo">
+        <label for="fin-evento">Fecha y hora estimada de finalización:</label>
+        <input type="datetime-local" id="fin-evento" name="fin-evento" required>
+      </div>
+
+      <div class="campo">
+        <label for="capacidad-evento">Capacidad total de espectadores:</label>
+        <input type="number" id="capacidad-evento" name="capacidad-evento" min="1" required>
+      </div>
+
+      <div class="campo">
+        <label for="precio-evento">Precio base de la entrada:</label>
+        <input type="number" id="precio-evento" name="precio-evento" min="0" required>
+      </div>
+
+      <div class="campo">
+        <label for="estado-evento">Estado del evento:</label>
+        <select id="estado-evento" name="estado-evento" required>
+          <option value="programado">Programado</option>
+          <option value="en-boleteria">En Boletería</option>
+          <option value="en-vivo">En Vivo</option>
+          <option value="finalizado">Finalizado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label for="descripcion-evento">Descripción:</label>
+      <textarea id="descripcion-evento" name="descripcion-evento" rows="3" required></textarea>
+    </div>
+
+    <div class="campo">
+      <label for="observaciones-evento">Observaciones:</label>
+      <textarea id="observaciones-evento" name="observaciones-evento" rows="2"></textarea>
+    </div>
+
+    <button type="submit" id="boton-registrar-evento">Registrar evento</button>
+  </form>
+</section>
