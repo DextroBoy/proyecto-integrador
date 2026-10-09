@@ -37,4 +37,6 @@ export const routes: Routes = [
                 redirectTo: "events",
                 pathMatch: "full"
             }
-        ] },]
+        ] 
+    },
+]
