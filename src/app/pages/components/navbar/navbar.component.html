@@ -1,0 +1,78 @@
+
+<nav class="app-navbar">
+
+    <div class="navbar-brand-section">
+
+        <a
+        routerLink="navbar-brand"
+        >
+          <div class="brand-icon">
+            <i class="bi bi-calendar-event"></i>
+          </div>
+
+          <span class="brand-name">
+            NombreAPP
+          </span>
+        </a>
+
+    </div>
+
+
+
+
+ <div class="navbar-navigation">
+
+    @for(item of navbarConfig; track item.url){
+      <a
+        [routerLink]="item.url"
+        routerLinkActive="active"
+        class="nav-link"
+      >
+        <i class="bi bi-ticket-perforated"></i>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+
+
+  </div>   
+
+
+
+  <div class="navbar-user-section">
+
+    <div class="user-info">
+
+      <div class="user-avatar">
+        iniciales usuario
+      </div>
+
+      <div class="user-data">
+        <span class="user-name">
+          User name
+        </span>
+
+        <span class="user-role">
+          Cliente = rol
+        </span>
+      </div>
+
+    </div>
+
+    <div class="user-actions">
+
+      <button
+        type="button"
+        class="logout-button"
+      >
+        <i class="bi bi-box-arrow-right"></i>
+
+        <span>
+          Cerrar sesión
+        </span>
+      </button>
+
+    </div>
+
+  </div>
+
+</nav>
