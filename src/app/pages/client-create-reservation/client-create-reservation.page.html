@@ -1,1 +1,161 @@
-<p>client-create-reservation.page works!</p>
+<section class="reservation-page-container">
+    <div class="mb-4">
+        <a routerLink="/client/events" class="reservation-page__back">
+            <i class="bi bi-arrow-left"></i>
+            volver a eventos
+        </a>
+
+        <h1 class="reservation-page_title mt-3">
+            Crear reserva
+        </h1>
+        <p class="text-secondary">
+            Revisa los detalles del evento y selecciona tus entradas.
+        </p>
+    </div>
+
+    /*detalle evento*/
+
+    @if (event) {
+        <div class="row g-4">
+            <div class="col-12 col-lg-7">
+                <article class="event-detail cart h-100">
+                    <img
+                    src="https:placehold.co/900x450/212529/ffffff?text=Evento"
+                    class="event-datail_image"
+                    alt="Imagen del evento"
+                    />
+
+                    <div class="card-body p-4">
+                        <span class="event-detail_category">
+                            {{ event.estado }}
+                        </span>
+
+                        <h2 class="event-detail_title mt-2">
+                            {{ event.nombre }}
+                        </h2>
+
+                        <p class="event-detail_description">
+                            {{ event.descripcion}}
+                        </p>
+
+                        <div class="event-detail__info">
+              <div class="event-detail__item">
+                <i class="bi bi-geo-alt"></i>
+                <div>
+                  <span class="event-detail__label">Lugar</span>
+                  <strong>{{ event.teatro }}</strong>
+                  <span>{{ event.ciudad }}, Colombia</span>
+                </div>
+              </div>
+
+              <div class="event-detail__item">
+                <i class="bi bi-calendar-event"></i>
+                <div>
+                  <span class="event-detail__label">Fecha de inicio</span>
+                  <strong>{{ getDate(event.fecha_inicio) }}</strong>
+                </div>
+              </div>
+
+              <div class="event-detail__item">
+                <i class="bi bi-people"></i>
+                <div>
+                  <span class="event-detail__label">Capacidad</span>
+                  <strong>{{ event.capacidad }} espectadores</strong>
+                </div>
+              </div>
+
+              <div class="event-detail__item">
+                <i class="bi bi-info-circle"></i>
+                <div>
+                  <span class="event-detail__label">Observaciones</span>
+                  <strong>{{ event.observaciones }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      //**reserva**//
+      <div class="col-12 col-lg-5">
+        <div class="reservation-form card">
+          <div class="card-body p-4">
+            <h2 class="reservation-form__title">
+              Tu reserva
+            </h2>
+
+            <p class="text-secondary">
+              Selecciona la cantidad de entradas que deseas reservar.
+            </p>
+
+            <form (submit)="reserve($event)">
+              <div class="mb-4">
+                <label for="ticket-quantity" class="form-label">
+                  Número de entradas
+                </label>
+
+                <input
+                  #ticketQuantity
+                  type="number"
+                  class="form-control reservation-form__input"
+                  id="ticket-quantity"
+                  name="cantidad"
+                  min="1"
+                  max="10"
+                  [value]="quantity"
+                  (input)="setQuantity(ticketQuantity.value)"
+                  required
+                />
+
+                <small class="text-secondary">
+                  Puedes reservar entre 1 y 10 entradas.
+                </small>
+              </div>
+
+              <div class="reservation-form__summary">
+                <div class="reservation-form__summary-row">
+                  <span>Precio por entrada</span>
+                  <span>{{ getMoney(event.precio) }} COP</span>
+                </div>
+
+                <div class="reservation-form__summary-row">
+                  <span>Cantidad</span>
+                  <span>{{ quantity }}</span>
+                </div>
+
+                <hr />
+
+                <div class="reservation-form__total">
+                  <span>Total</span>
+                  <strong>{{ getMoney(getTotal()) }} COP</strong>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary reservation-form__submit w-100 mt-4"
+              >
+                <i class="bi bi-check-circle me-2"></i>
+                Realizar reserva
+              </button>
+
+              @if(reserved){
+                <div class="alert alert-success mt-3 mb-0">
+                  Reserva realizada: {{ quantity }} entrada(s) para {{ event.nombre }}.
+                </div>
+              }
+
+              <p class="reservation-form__notice mt-3 mb-0">
+                La reserva estará sujeta a la disponibilidad de entradas.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <div class="alert alert-warning">
+      No encontramos el evento que buscas.
+    </div>
+  }
+</section>

@@ -1,16 +1,75 @@
 <section class="events-section container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="events-section_title">Proximos Eventos</h2>
-            <p class="text-secondary">Explora los eventos que tenemos para ti</p>
+
+  <!-- Bloque central destacado -->
+  @if(getFeatured(); as item){
+    <div class="hero mb-5">
+      <button
+        type="button"
+        class="hero__arrow hero__arrow--prev"
+        aria-label="Evento anterior"
+        (click)="previousFeatured()"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <div class="hero__content">
+        <span class="hero__badge">{{ item.estado }}</span>
+
+        <h1 class="hero__title">{{ item.nombre }}</h1>
+
+        <p class="hero__description">{{ item.descripcion }}</p>
+
+        <div class="hero__meta">
+          <span><i class="bi bi-geo-alt"></i> {{ item.teatro }} · {{ item.ciudad }}</span>
+          <span><i class="bi bi-calendar-event"></i> {{ getDate(item.fecha_inicio) }}</span>
+          <span><i class="bi bi-ticket-perforated"></i> Desde {{ getPrice(item.precio) }} COP</span>
         </div>
-    </div>
 
-    <div class="row g-4">
+        <a
+          [routerLink]="['/client/create-reservation', item.codigo]"
+          class="btn btn-light hero__button"
+        >
+          Reservar ahora
+        </a>
+      </div>
 
-        @for(event of events; track event.id){
-            <app-event-card [event]="event" />
+      <button
+        type="button"
+        class="hero__arrow hero__arrow--next"
+        aria-label="Evento siguiente"
+        (click)="nextFeatured()"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <div class="hero__dots">
+        @for(dot of featured; track dot.codigo; let i = $index){
+          <button
+            type="button"
+            class="hero__dot"
+            [class.hero__dot--active]="i === featuredIndex"
+            [attr.aria-label]="'Ir al evento ' + (i + 1)"
+            (click)="setFeatured(i)"
+          ></button>
         }
-        
+      </div>
     </div>
+  }
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="events-section__title">Próximos eventos</h2>
+    <span class="events-section__count">{{ events.length }} eventos</span>
+  </div>
+
+  <div class="row g-4">
+
+    @for(event of events; track event.codigo){
+      <app-event-card class="col-12 col-md-6 col-lg-4" [event]="event" />
+    } @empty {
+      <p class="text-secondary">No hay eventos disponibles por ahora.</p>
+    }
+
+  </div>
 </section>
+
+
