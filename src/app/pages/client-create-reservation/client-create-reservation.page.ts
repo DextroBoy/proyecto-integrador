@@ -91,6 +91,7 @@ export class ClientCreateReservationPage {
 
   setQuantity(value: string) {
     const number = Number(value);
+
     if (number < 1) {
       this.quantity = 1;
     } else if (number > 10) {

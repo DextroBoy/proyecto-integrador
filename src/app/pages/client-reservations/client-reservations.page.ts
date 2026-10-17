@@ -12,14 +12,14 @@ export class ClientReservationsPage {
 
   reservations: Reservation[] = [
      {
-      codigo: 0,
+      codigo: 3001,
       fecha: new Date('2026-10-05T10:15:00'),
       total: 140000,
       entradas: 2,
       observaciones: 'Zona preferencial.',
       estado: 'Confirmada',
       evento: {
-        codigo: 0,
+        codigo: 1001,
         nombre: 'Noche de Salsa en Vivo',
         descripcion: 'Orquestas locales e invitados especiales en una noche para bailar.',
         teatro: 'Club Social Pacífico',
@@ -33,14 +33,14 @@ export class ClientReservationsPage {
       }
     },
     {
-      codigo: 0 ,
+      codigo: 3002,
       fecha: new Date('2026-10-08T16:40:00'),
       total: 120000,
       entradas: 3,
       observaciones: 'Pendiente de pago.',
       estado: 'Reservada',
       evento: {
-        codigo: 0 ,
+        codigo: 2002,
         nombre: 'Festival de Cine Independiente',
         descripcion: 'Muestra de cortometrajes y largometrajes de directores emergentes.',
         teatro: 'Teatro Municipal',
@@ -54,14 +54,14 @@ export class ClientReservationsPage {
       }
     },
     {
-      codigo: 0,
+      codigo: 3004,
       fecha: new Date('2026-10-01T09:05:00'),
       total: 80000,
       entradas: 1,
       observaciones: 'Cancelada por el cliente.',
       estado: 'Cancelada',
       evento: {
-        codigo: 0,
+        codigo: 2004,
         nombre: 'Gran Concierto de Vallenato',
         descripcion: 'Presentación de los mejores exponentes del vallenato tradicional.',
         teatro: 'Coliseo de Ferias',
@@ -103,4 +103,3 @@ export class ClientReservationsPage {
 
 }
 
-  
