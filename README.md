@@ -1,59 +1,78 @@
-# ProyectoIntegrador
+# Proyecto Integrador
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.37.
+Aplicación web para consultar eventos y simular la creación de reservas. Está
+construida con Angular 20, Angular Router, Bootstrap y Bootstrap Icons. El
+proyecto incluye vistas para clientes, agentes y administradores, pero en este
+estado varias de esas vistas son demostrativas y no están conectadas a un
+servidor.
 
-## Development server
+## Requisitos
 
-To start a local development server, run:
+- Node.js compatible con Angular 20.
+- npm.
 
-```bash
-ng serve
-```
+Las versiones concretas de Angular y del resto de dependencias están definidas
+en [`package.json`](./package.json). Se incluye [`package-lock.json`](./package-lock.json)
+para instalar las dependencias reproducibles.
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Instalación y ejecución
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Desde la carpeta raíz del proyecto:
 
 ```bash
-ng generate --help
+npm install
+npm run start
 ```
 
-## Building
+El comando `npm run start` ejecuta `ng serve` y levanta el servidor de desarrollo.
+Cuando termine de iniciar, abre [http://localhost:4200/](http://localhost:4200/)
+en el navegador. La ruta raíz redirige automáticamente a `/login`.
 
-To build the project run:
+## Rutas disponibles
 
-```bash
-ng build
-```
+| Ruta | Contenido |
+| --- | --- |
+| `/` | Redirección a `/login`. |
+| `/login` | Formulario visual de inicio de sesión. |
+| `/register` | Formulario visual de registro. |
+| `/client` | Área de cliente; redirige a `/client/events`. |
+| `/client/events` | Listado de eventos mock, evento destacado navegable y enlaces para reservar. |
+| `/client/reservations` | Listado de reservas mock. |
+| `/client/create-reservation/:id` | Detalle de un evento y formulario para crear una reserva de demostración. |
+| `/client/create-reservation` | Redirección a `/client/events`. |
+| `/admin` | Panel administrativo con reportes y tablas estáticas de ejemplo. |
+| `/agent` | Área de agente; redirige a `/agent/events`. |
+| `/agent/events` | Tabla estática de eventos registrados. |
+| `/agent/create-event` | Formulario visual para registrar un evento. |
+| `/agent/reservations` | Tabla estática para administrar reservas. |
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Las rutas no tienen autenticación ni guards de acceso. Por lo tanto, se pueden
+abrir directamente escribiendo la URL.
 
-## Running unit tests
+## Datos mock y limitaciones
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+- Los eventos están definidos directamente en `EventService`: actualmente hay
+  cinco eventos de ejemplo, con código, nombre, ubicación, fechas, capacidad,
+  precio, observaciones y estado.
+- Las reservas iniciales están definidas en `ReservationService`: hay tres
+  reservas asociadas a esos eventos.
+- Al confirmar una reserva desde
+  `/client/create-reservation/:id`, se crea una reserva en memoria con un código
+  consecutivo, el precio calculado y estado `Reservada`. La cantidad permitida
+  es de 1 a 10 entradas.
+- Los cambios solo viven mientras la aplicación está abierta. Al recargar la
+  página se restablecen los datos iniciales; no hay API, base de datos,
+  persistencia en el navegador, pagos ni comprobación real de disponibilidad.
+- Los formularios de `/login` y `/register` no tienen lógica de autenticación o
+  registro conectada.
+- Las pantallas de `/admin` y `/agent` muestran contenido fijo. Sus formularios,
+  selectores y botones no guardan eventos, actualizan reservas ni generan
+  reportes dinámicamente.
+- Las imágenes de eventos son marcadores visuales (`placehold.co`), no imágenes
+  almacenadas del catálogo.
 
-```bash
-ng test
-```
+## Tecnologías principales
 
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- Angular 20 con enrutamiento y renderizado del lado del servidor configurado.
+- TypeScript.
+- Bootstrap 5, Bootstrap Icons y estilos SCSS.
