@@ -1,0 +1,55 @@
+<section id="seccion-administrar-reservas">
+  <h2>Administrar reservas</h2>
+
+  <table border="1" id="tabla-administrar-reservas">
+    <thead>
+      <tr>
+        <th>Reserva</th>
+        <th>Cliente</th>
+        <th>Evento</th>
+        <th>Entradas</th>
+        <th>Valor total</th>
+        <th>Estado actual</th>
+        <th>Nuevo estado</th>
+        <th>Causa (si se cancela)</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>RES-0045</td>
+        <td>Juan Pérez</td>
+        <td>Concierto de rock</td>
+        <td>2</td>
+        <td>$ 160.000</td>
+        <td class="estado-reservada">Reservada</td>
+        <td>
+          <select id="nuevo-estado-res-0045" name="nuevo-estado-res-0045">
+            <option value="reservada">Reservada</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+        </td>
+        <td><input type="text" id="causa-res-0045" name="causa-res-0045"></td>
+        <td><button type="button" id="boton-actualizar-res-0045">Actualizar</button></td>
+      </tr>
+      <tr>
+        <td>RES-0046</td>
+        <td>Ana Torres</td>
+        <td>Festival de teatro</td>
+        <td>4</td>
+        <td>$ 180.000</td>
+        <td class="estado-confirmada">Confirmada</td>
+        <td>
+          <select id="nuevo-estado-res-0046" name="nuevo-estado-res-0046">
+            <option value="reservada">Reservada</option>
+            <option value="confirmada" selected>Confirmada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+        </td>
+        <td><input type="text" id="causa-res-0046" name="causa-res-0046"></td>
+        <td><button type="button" id="boton-actualizar-res-0046">Actualizar</button></td>
+      </tr>
+    </tbody>
+  </table>
+</section>

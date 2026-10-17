@@ -1,0 +1,47 @@
+section {
+    margin: 20px;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid gray;
+}
+
+h2 {
+    font-size: 28px;
+    color: darkblue;
+}
+
+/* ===== Tabla ===== */
+table {
+    width: 100%;
+}
+
+th {
+    padding: 8px;
+    text-align: left;
+    color: darkblue;
+}
+
+td {
+    padding: 8px;
+    text-align: left;
+}
+
+/* ===== Estados del evento ===== */
+.estado-programado {
+    color: blue;
+}
+
+.estado-en-boleteria {
+    color: green;
+}
+
+.estado-cancelado {
+    color: red;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:768px) {
+    table {
+        font-size: 12px;
+    }
+}
