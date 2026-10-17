@@ -8,7 +8,7 @@ describe('ClientCreateReservationPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ClientCreateReservationPage]
+      imports: [ClientCreateReservationPage],
     })
     .compileComponents();
 
