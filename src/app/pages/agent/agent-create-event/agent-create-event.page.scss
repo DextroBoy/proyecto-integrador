@@ -1,57 +1,91 @@
-section {
-    margin: 20px;
-    padding: 15px;
-    background-color: white;
-    border: 1px solid gray;
+#seccion-registrar-evento {
+  padding: 1.5rem;
+  border: 1px solid #e9edf3;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 4px 20px rgb(33 37 41 / 4%);
 }
 
-h2 {
-    font-size: 28px;
-    color: darkblue;
+#seccion-registrar-evento h2 {
+  margin: 0 0 1.5rem;
+  color: #212529;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
-/* ===== Formulario (Grid de 2 columnas) ===== */
-.campos {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+#formulario-evento .campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
 }
 
-.campo {
-    margin: 10px;
+#formulario-evento .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
 }
 
-label {
-    display: block;
-    color: gray;
+#formulario-evento .campo > label {
+  color: #495057;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
-input {
-    padding: 8px;
-    border: 1px solid gray;
+#formulario-evento input,
+#formulario-evento select,
+#formulario-evento textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #ced4da;
+  border-radius: 0.65rem;
+  color: #495057;
+  background-color: #fff;
+  font: inherit;
 }
 
-select {
-    padding: 8px;
-    border: 1px solid gray;
+#formulario-evento textarea {
+  min-height: 96px;
+  resize: vertical;
 }
 
-textarea {
-    width: 90%;
-    padding: 8px;
-    border: 1px solid gray;
+#formulario-evento input:focus,
+#formulario-evento select:focus,
+#formulario-evento textarea:focus {
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgb(13 110 253 / 15%);
 }
 
-button {
-    padding: 10px;
-    background-color: darkblue;
-    color: white;
-    border: 1px solid darkblue;
+#formulario-evento > .campo {
+  margin-top: 1rem;
 }
 
-/* ===== Responsive ===== */
-@media(max-width:768px) {
-    .campos {
-        grid-template-columns: 1fr;
-    }
+#boton-registrar-evento {
+  min-height: 44px;
+  margin-top: 1.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #0d6efd;
+  border-radius: 0.65rem;
+  color: #fff;
+  background-color: #0d6efd;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+#boton-registrar-evento:hover,
+#boton-registrar-evento:focus-visible {
+  border-color: #0a58ca;
+  background-color: #0a58ca;
+}
+
+@media (max-width: 767.98px) {
+  #seccion-registrar-evento {
+    padding: 1rem;
+  }
+
+  #formulario-evento .campos {
+    grid-template-columns: 1fr;
+  }
 }

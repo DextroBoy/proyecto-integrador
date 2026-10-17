@@ -1,47 +1,72 @@
-section {
-    margin: 20px;
-    padding: 15px;
-    background-color: white;
-    border: 1px solid gray;
+#seccion-eventos-registrados {
+  overflow-x: auto;
+  padding: 1.5rem;
+  border: 1px solid #e9edf3;
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 4px 20px rgb(33 37 41 / 4%);
 }
 
-h2 {
-    font-size: 28px;
-    color: darkblue;
+#seccion-eventos-registrados h2 {
+  margin: 0 0 1.25rem;
+  color: #212529;
+  font-size: 1.15rem;
+  font-weight: 700;
 }
 
-/* ===== Tabla ===== */
-table {
-    width: 100%;
+#tabla-eventos-registrados {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
 }
 
-th {
-    padding: 8px;
-    text-align: left;
-    color: darkblue;
+#tabla-eventos-registrados th {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e9edf4;
+  background-color: #f8f9fc;
+  color: #495057;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: left;
+  white-space: nowrap;
 }
 
-td {
-    padding: 8px;
-    text-align: left;
+#tabla-eventos-registrados td {
+  padding: 1.1rem 1.25rem;
+  border-bottom: 1px solid #f0f2f6;
+  color: #495057;
+  font-size: 0.85rem;
+  white-space: nowrap;
 }
 
-/* ===== Estados del evento ===== */
+#tabla-eventos-registrados tbody tr:hover {
+  background-color: #fafbfe;
+}
+
+#tabla-eventos-registrados tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.estado-programado,
+.estado-en-boleteria,
+.estado-cancelado {
+  font-weight: 600;
+}
+
 .estado-programado {
-    color: blue;
+  color: #0d6efd;
 }
 
 .estado-en-boleteria {
-    color: green;
+  color: #198754;
 }
 
 .estado-cancelado {
-    color: red;
+  color: #dc3545;
 }
 
-/* ===== Responsive ===== */
-@media(max-width:768px) {
-    table {
-        font-size: 12px;
-    }
+@media (max-width: 575.98px) {
+  #seccion-eventos-registrados {
+    padding: 1rem;
+  }
 }
