@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
-import { Event } from '../../interfaces/event.interface';
+import { Event } from '../../../interfaces/event.interface';
 import { EventService } from '../../../services/event.service';
 import { ReservationService } from '../../../services/reservation.service';
 

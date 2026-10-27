@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Event } from '../pages/interfaces/event.interface';
-import { Reservation } from '../pages/interfaces/reservation.interface';
+import { Event } from '../interfaces/event.interface';
+import { Reservation } from '../interfaces/reservation.interface';
 import { EventService } from './event.service';
 
 type ReservationMock = Omit<Reservation, 'evento'> & { eventoCodigo: number };

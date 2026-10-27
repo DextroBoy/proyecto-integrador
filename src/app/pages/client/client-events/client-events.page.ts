@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { Event } from '../../interfaces/event.interface';
-import { EventCardComponent } from '../../components/event-card/event-card.component';
+import { Event } from '../../../interfaces/event.interface';
+import { EventCardComponent } from '../../../components/event-card/event-card.component';
 import { RouterLink } from '@angular/router';
 import { EventService } from '../../../services/event.service';
 

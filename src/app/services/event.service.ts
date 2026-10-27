@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Event } from '../pages/interfaces/event.interface';
+import { Event } from '../interfaces/event.interface';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
