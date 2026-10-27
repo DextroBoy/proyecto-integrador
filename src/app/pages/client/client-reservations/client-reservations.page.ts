@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { Reservation, ReservationState } from '../../interfaces/reservation.interface';
+import { Reservation, ReservationState } from '../../../interfaces/reservation.interface';
 import { ReservationService } from '../../../services/reservation.service';
 
 @Component({

@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { AgentPage } from './agent.page';
 
@@ -8,7 +9,8 @@ describe('AgentPage', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AgentPage]
+      imports: [AgentPage],
+      providers: [provideRouter([])],
     })
     .compileComponents();
 

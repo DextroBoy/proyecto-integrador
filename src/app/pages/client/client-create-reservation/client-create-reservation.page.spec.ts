@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { ClientCreateReservationPage } from './client-create-reservation.page';
 
@@ -9,6 +10,7 @@ describe('ClientCreateReservationPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ClientCreateReservationPage],
+      providers: [provideRouter([])],
     })
     .compileComponents();
 
