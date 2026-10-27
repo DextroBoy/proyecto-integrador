@@ -80,8 +80,8 @@ Backend/
 ## Estado actual
 
 - [x] Frontend reestructurado (interfaces y components en `src/app`, master merged).
-- [x] Servicios del front creados con mocks (`event.service.ts` y `reservation.service.ts` sueltos, pendiente reorganizar por perfil).
-- [ ] Carpeta `Frontend/` del monorepo.
-- [ ] Carpeta `Backend/` base.
+- [ ] Servicios del front creados con mocks (`event.service.ts` y `reservation.service.ts` siguen sueltos en `src/app/services`, pendiente reorganizarlos por perfil).
+- [x] Carpeta `Frontend/` del monorepo.
+- [x] Carpeta `Backend/` base (copiada del profesor, con `.env.example` y `.gitignore` propios).
 - [ ] `docker-compose` levantando PostgreSQL.
 - [ ] Módulos reales del backend.
