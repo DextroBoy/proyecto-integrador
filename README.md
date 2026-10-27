@@ -76,5 +76,3 @@ abrir directamente escribiendo la URL.
 - Angular 20 con enrutamiento y renderizado del lado del servidor configurado.
 - TypeScript.
 - Bootstrap 5, Bootstrap Icons y estilos SCSS.
-
-hola
