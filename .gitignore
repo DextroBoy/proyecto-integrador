@@ -1,1 +1,15 @@
-node_modules
+# Monorepo: dependencias y artefactos de build
+node_modules/
+dist/
+.angular/
+*.tsbuildinfo
+
+# Variables de entorno reales
+.env
+.env.local
+.env.*.local
+
+# Logs y archivos del sistema
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,14 @@
+node_modules/
+dist/
+
+# Variables de entorno reales (nunca versionar credenciales)
+.env
+.env.local
+.env.*.local
+
+# Volumenes locales de Docker
+postgres/
+pgadmin/
+
+# Logs
+*.log
