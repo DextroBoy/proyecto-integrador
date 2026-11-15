@@ -1,0 +1,55 @@
+<div class="location-selector">
+  <div class="row g-3">
+    <div class="col-12 col-md-4">
+      <label class="form-label" [attr.for]="idPrefix + '-country'">País</label>
+      <select
+        #countrySelect
+        [id]="idPrefix + '-country'"
+        class="form-select"
+        [disabled]="loadingCountries"
+        (change)="selectCountry(countrySelect.value)"
+      >
+        <option value="">Selecciona un país</option>
+        @for (country of countryOptions; track country.id) {
+          <option [value]="country.id">{{ country.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label class="form-label" [attr.for]="idPrefix + '-department'">Departamento</label>
+      <select
+        #departmentSelect
+        [id]="idPrefix + '-department'"
+        class="form-select"
+        [disabled]="!selection.id_pais || loadingDepartments"
+        (change)="selectDepartment(departmentSelect.value)"
+      >
+        <option value="">Selecciona un departamento</option>
+        @for (department of departmentOptions; track department.id) {
+          <option [value]="department.id">{{ department.nombre }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="col-12 col-md-4">
+      <label class="form-label" [attr.for]="idPrefix + '-city'">Ciudad</label>
+      <select
+        #citySelect
+        [id]="idPrefix + '-city'"
+        class="form-select"
+        [disabled]="!selection.id_departamento || loadingCities"
+        (change)="selectCity(citySelect.value)"
+      >
+        <option value="">Selecciona una ciudad</option>
+        @for (city of cityOptions; track city.id) {
+          <option [value]="city.id">{{ city.nombre }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  @if (errorMessage) {
+    <p class="text-danger mt-2 mb-0" role="alert">{{ errorMessage }}</p>
+  }
+</div>
