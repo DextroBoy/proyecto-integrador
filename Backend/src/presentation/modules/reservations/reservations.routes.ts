@@ -7,7 +7,10 @@ export class ReservationsRoutes {
     const controller = new ReservationsController();
 
     router.get("/", controller.getAll);
+    router.get("/:id", controller.getById);
     router.post("/", controller.create);
+    router.put("/:id", controller.update);
+    router.delete("/:id", controller.delete);
     router.patch("/:id/estado", controller.updateState);
 
     return router;

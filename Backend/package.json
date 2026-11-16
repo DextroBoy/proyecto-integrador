@@ -7,7 +7,9 @@
     "start": "tsnd --respawn --clear src/app.ts",
     "dev": "tsnd --respawn --clear src/app.ts",
     "db:init": "tsnd --transpile-only src/scripts/init-db.ts",
-    "db:seed": "tsnd --transpile-only src/scripts/seed-db.ts"
+    "db:seed": "tsnd --transpile-only src/scripts/seed-db.ts",
+    "typecheck": "tsc --noEmit",
+    "test:reservations": "node --test -r ts-node/register src/presentation/modules/reservations/reservations.service.test.ts"
   },
   "keywords": [],
   "author": "",

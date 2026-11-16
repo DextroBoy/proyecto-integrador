@@ -29,10 +29,19 @@ traducción página → endpoint están en [`../BACKEND-PLAN.md`](../BACKEND-PLA
 - `POST /api/events`: crea un evento; requiere `identificacion` (agente),
   `id_ciudad`, `nombre`, `teatro`, `capacidad`, `descripcion`, `precio`,
   `fecha_inicio` y `fecha_fin`. `estado` es opcional y por defecto es `PROGRAMADO`.
-- `GET /api/reservations` y `GET /api/reservations?cliente=3001`: consulta reservas.
-- `POST /api/reservations`: recibe `identificacion` (cliente), `id_evento`,
-  `entradas` y, opcionalmente, `observacion`.
-- `PATCH /api/reservations/:id/estado`: recibe `{ "estado": "CONFIRMADA" }`.
+- `GET /api/reservations` y `GET /api/reservations/:id`: consulta reservas dentro
+  del alcance del usuario autenticado (cliente o eventos del agente).
+- `POST /api/reservations`: recibe `id_evento`, `entradas` y, opcionalmente,
+  `observacion`. La identidad del cliente procede de `req.user`, no del cuerpo.
+- `PUT /api/reservations/:id`: actualiza entradas/evento/observaciones del cliente
+  autenticado o el estado de reservas de los eventos del agente.
+- `PATCH /api/reservations/:id/estado`: compatibilidad para actualizar el estado.
+- `DELETE /api/reservations/:id`: elimina una reserva dentro del alcance autorizado.
+
+Las pruebas de integración de reservas usan los datos de PostgreSQL y se ejecutan
+con `npm run test:reservations`. El módulo espera que el middleware de autenticación
+adjunte `{ identificacion, rol }` a `req.user`; actualmente el módulo de autenticación
+del proyecto solo expone login y aún no registra ese middleware.
 
 Los eventos y reservas se devuelven con los campos que consume el frontend
 (`codigo`, `observaciones`, estados legibles y, en las reservas, `evento`).
