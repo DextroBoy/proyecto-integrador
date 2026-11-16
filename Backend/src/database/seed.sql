@@ -44,12 +44,12 @@ INSERT INTO ciudad (id_departamento, nombre) VALUES
 (7, 'Guadalajara');
 
 INSERT INTO persona (
-    identificacion,
+    num_identificacion,
     tipo_identificacion,
     nombre,
     direccion,
-    email,
-    clave,
+    correo_electronico,
+    contrasena,
     rol,
     id_ciudad
 ) VALUES
@@ -77,7 +77,7 @@ INSERT INTO persona (
 ('3009', 'CC', 'Samuel Ortiz', 'Calle 40 # 10-30', 'samuel@gmail.com', '123456', 'CLIENTE', 9),
 ('3010', 'CC', 'Valeria Mendoza', 'Carrera 12 # 15-25', 'valeria@gmail.com', '123456', 'CLIENTE', 10);
 
-INSERT INTO cliente (identificacion, puntos, publicidad) VALUES
+INSERT INTO cliente (num_identificacion, puntos, publicidad) VALUES
 ('3001', 150, TRUE),
 ('3002', 300, TRUE),
 ('3003', 50, FALSE),
@@ -89,20 +89,20 @@ INSERT INTO cliente (identificacion, puntos, publicidad) VALUES
 ('3009', 0, TRUE),
 ('3010', 200, TRUE);
 
-INSERT INTO agente (identificacion, comision, experiencia) VALUES
+INSERT INTO agente (num_identificacion, comision, experiencia) VALUES
 ('2001', 10, '5 años de experiencia'),
 ('2002', 12, '3 años de experiencia'),
 ('2003', 8, '2 años de experiencia'),
 ('2004', 15, '7 años de experiencia'),
 ('2005', 10, '4 años de experiencia');
 
-INSERT INTO admin (identificacion, salario, horario) VALUES
+INSERT INTO admin (num_identificacion, salario, horario) VALUES
 ('1001', 5000000, 'Lunes a Viernes'),
 ('1002', 4500000, 'Lunes a Viernes'),
 ('1003', 5500000, 'Lunes a Sábado');
 
 INSERT INTO evento (
-    identificacion,
+    num_identificacion,
     id_ciudad,
     id_estado,
     nombre,
@@ -182,7 +182,7 @@ INSERT INTO evento (
  'Incluye degustaciones', NULL);
 
 INSERT INTO reserva (
-    identificacion,
+    num_identificacion,
     id_evento,
     id_estado,
     fecha_hora_reserva,
