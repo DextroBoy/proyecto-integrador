@@ -1,78 +1,74 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Event } from '../interfaces/event.interface';
-import { Reservation } from '../interfaces/reservation.interface';
-import { EventService } from './event.service';
+import { Observable, map } from 'rxjs';
+import { Reservation, ReservationState } from '../interfaces/reservation.interface';
+import { API_BASE_URL } from './api.config';
 
-type ReservationMock = Omit<Reservation, 'evento'> & { eventoCodigo: number };
+type ReservationPayload = Omit<Reservation, 'fecha' | 'evento'> & {
+  fecha: string;
+  evento: Omit<Reservation['evento'], 'fecha_inicio' | 'fecha_fin'> & {
+    fecha_inicio: string;
+    fecha_fin: string;
+  };
+};
 
-const RESERVATION_MOCKS: ReservationMock[] = [
-  {
-    codigo: 3001,
-    fecha: new Date('2026-10-05T10:15:00'),
-    total: 170000,
-    entradas: 2,
-    observaciones: 'Zona preferencial.',
-    estado: 'Confirmada',
-    eventoCodigo: 1001,
-  },
-  {
-    codigo: 3002,
-    fecha: new Date('2026-10-08T16:40:00'),
-    total: 195000,
-    entradas: 3,
-    observaciones: 'Pendiente de pago.',
-    estado: 'Reservada',
-    eventoCodigo: 1002,
-  },
-  {
-    codigo: 3004,
-    fecha: new Date('2026-10-01T09:05:00'),
-    total: 75000,
-    entradas: 1,
-    observaciones: 'Cancelada por el cliente.',
-    estado: 'Cancelada',
-    eventoCodigo: 1005,
-  },
-];
+function mapReservation(reservation: ReservationPayload): Reservation {
+  return {
+    ...reservation,
+    fecha: new Date(reservation.fecha),
+    evento: {
+      ...reservation.evento,
+      fecha_inicio: new Date(reservation.evento.fecha_inicio),
+      fecha_fin: new Date(reservation.evento.fecha_fin),
+    },
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class ReservationService {
-  private readonly reservations: Reservation[];
-  private nextCode: number;
+  private readonly url = `${API_BASE_URL}/reservations`;
 
-  constructor(private readonly eventService: EventService) {
-    this.reservations = RESERVATION_MOCKS.map(({ eventoCodigo, ...reservation }) => {
-      const event = this.eventService.getByCode(eventoCodigo);
+  constructor(private readonly http: HttpClient) {}
 
-      if (!event) {
-        throw new Error(`Mock reservation references missing event ${eventoCodigo}.`);
-      }
-
-      return { ...reservation, evento: event };
-    });
-    this.nextCode = Math.max(...this.reservations.map(({ codigo }) => codigo)) + 1;
+  getAll(): Observable<Reservation[]> {
+    return this.http
+      .get<ReservationPayload[]>(this.url)
+      .pipe(map((reservations) => reservations.map(mapReservation)));
   }
 
-  getAll(): Reservation[] {
-    return [...this.reservations];
+  getById(id: number): Observable<Reservation> {
+    return this.http.get<ReservationPayload>(`${this.url}/${id}`).pipe(map(mapReservation));
   }
 
-  create(event: Event, entradas: number): Reservation {
-    if (!Number.isInteger(entradas) || entradas < 1 || entradas > 10) {
-      throw new RangeError('Reservation quantity must be an integer between 1 and 10.');
-    }
+  create(idEvento: number, entradas: number, observacion = ''): Observable<Reservation> {
+    return this.http
+      .post<ReservationPayload>(this.url, {
+        id_evento: idEvento,
+        entradas,
+        observacion,
+      })
+      .pipe(map(mapReservation));
+  }
 
-    const reservation: Reservation = {
-      codigo: this.nextCode++,
-      fecha: new Date(),
-      total: event.precio * entradas,
-      entradas,
-      observaciones: 'Reserva de demostración.',
-      estado: 'Reservada',
-      evento: event,
-    };
+  update(
+    id: number,
+    updates: {
+      id_evento?: number;
+      entradas?: number;
+      estado?: ReservationState;
+      observacion?: string;
+    },
+  ): Observable<Reservation> {
+    return this.http
+      .put<ReservationPayload>(`${this.url}/${id}`, updates)
+      .pipe(map(mapReservation));
+  }
 
-    this.reservations.push(reservation);
-    return reservation;
+  updateState(id: number, estado: ReservationState): Observable<Reservation> {
+    return this.update(id, { estado });
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.url}/${id}`);
   }
 }

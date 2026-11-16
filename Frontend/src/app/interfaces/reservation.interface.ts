@@ -5,8 +5,13 @@ export interface Reservation {
   fecha: Date;
   total: number;
   entradas: number;
-  observaciones: string
+  observaciones: string;
   estado: ReservationState;
+  cliente: {
+    identificacion: number;
+    nombre: string;
+    email: string;
+  };
   evento: Event;
 }
 

@@ -3,6 +3,7 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Event } from '../../../interfaces/event.interface';
 import { EventService } from '../../../services/event.service';
 import { ReservationService } from '../../../services/reservation.service';
+import { apiErrorMessage } from '../../../services/api-error';
 
 @Component({
   selector: 'app-client-create-reservation.page',
@@ -19,10 +20,28 @@ export class ClientCreateReservationPage {
   event: Event | null = null;
   quantity = 1;
   reserved = false;
+  loading = true;
+  submitting = false;
+  errorMessage = '';
+  reservationCode: number | null = null;
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.event = this.eventService.getByCode(id) ?? null;
+    if (!Number.isSafeInteger(id) || id < 1) {
+      this.errorMessage = 'El evento solicitado no es válido.';
+      this.loading = false;
+      return;
+    }
+    this.eventService.getByCode(id).subscribe({
+      next: (event) => {
+        this.event = event;
+        this.loading = false;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = apiErrorMessage(error);
+        this.loading = false;
+      },
+    });
   }
 
   setQuantity(value: string) {
@@ -53,14 +72,25 @@ export class ClientCreateReservationPage {
     });
   }
 
-  reserve(submitEvent: SubmitEvent) {
+  reserve(submitEvent: SubmitEvent): void {
     submitEvent.preventDefault();
-
-    if (this.event) {
-      this.reservationService.create(this.event, this.quantity);
+    if (!this.event || this.submitting) {
+      return;
     }
 
-    this.reserved = true;
+    this.submitting = true;
+    this.errorMessage = '';
+    this.reservationService.create(this.event.codigo, this.quantity).subscribe({
+      next: (reservation) => {
+        this.reservationCode = reservation.codigo;
+        this.reserved = true;
+        this.submitting = false;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = apiErrorMessage(error);
+        this.submitting = false;
+      },
+    });
   }
 
 }

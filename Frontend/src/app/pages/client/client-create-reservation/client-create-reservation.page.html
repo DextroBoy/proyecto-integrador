@@ -1,4 +1,10 @@
 <section class="reservation-page-container">
+    @if (loading) {
+      <p class="text-secondary" role="status">Cargando evento...</p>
+    }
+    @if (errorMessage) {
+      <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    }
     <div class="mb-4">
         <a routerLink="/client/events" class="reservation-page__back">
             <i class="bi bi-arrow-left"></i>
@@ -75,7 +81,6 @@
         </article>
       </div>
 
-      //**reserva**//
       <div class="col-12 col-lg-5">
         <div class="reservation-form card">
           <div class="card-body p-4">
@@ -133,14 +138,20 @@
               <button
                 type="submit"
                 class="btn btn-primary reservation-form__submit w-100 mt-4"
+                [disabled]="submitting || reserved"
               >
-                <i class="bi bi-check-circle me-2"></i>
-                Realizar reserva
+                @if (submitting) {
+                  Procesando...
+                } @else if (!loading && !errorMessage) {
+                  <i class="bi bi-check-circle me-2"></i>
+                  Realizar reserva
+                }
               </button>
 
-              @if(reserved){
+              @if (reserved) {
                 <div class="alert alert-success mt-3 mb-0">
-                  Reserva realizada: {{ quantity }} entrada(s) para {{ event.nombre }}.
+                  Reserva #{{ reservationCode }} realizada: {{ quantity }} entrada(s) para
+                  {{ event.nombre }}.
                 </div>
               }
 

@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Reservation, ReservationState } from '../../../interfaces/reservation.interface';
 import { ReservationService } from '../../../services/reservation.service';
+import { apiErrorMessage } from '../../../services/api-error';
 
 @Component({
   selector: 'app-client-reservations.page',
@@ -11,7 +12,56 @@ import { ReservationService } from '../../../services/reservation.service';
 export class ClientReservationsPage {
   private readonly reservationService = inject(ReservationService);
 
-  reservations: Reservation[] = this.reservationService.getAll();
+  reservations: Reservation[] = [];
+  loading = true;
+  errorMessage = '';
+  successMessage = '';
+  updatingId: number | null = null;
+
+  constructor() {
+    this.loadReservations();
+  }
+
+  loadReservations(): void {
+    this.loading = true;
+    this.errorMessage = '';
+    this.reservationService.getAll().subscribe({
+      next: (reservations) => {
+        this.reservations = reservations;
+        this.loading = false;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = apiErrorMessage(error);
+        this.loading = false;
+      },
+    });
+  }
+
+  cancelReservation(reservation: Reservation): void {
+    if (
+      reservation.estado === 'Cancelada' ||
+      !globalThis.confirm(`¿Cancelar la reserva #${reservation.codigo}?`)
+    ) {
+      return;
+    }
+
+    this.updatingId = reservation.codigo;
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.reservationService.updateState(reservation.codigo, 'Cancelada').subscribe({
+      next: (updatedReservation) => {
+        this.reservations = this.reservations.map((item) =>
+          item.codigo === updatedReservation.codigo ? updatedReservation : item,
+        );
+        this.successMessage = `La reserva #${updatedReservation.codigo} fue cancelada.`;
+        this.updatingId = null;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = apiErrorMessage(error);
+        this.updatingId = null;
+      },
+    });
+  }
 
   getStatusClass(estado: ReservationState): string {
     switch (estado) {

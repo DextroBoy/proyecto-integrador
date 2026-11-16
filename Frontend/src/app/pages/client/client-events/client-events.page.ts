@@ -3,6 +3,7 @@ import { Event } from '../../../interfaces/event.interface';
 import { EventCardComponent } from '../../../components/event-card/event-card.component';
 import { RouterLink } from '@angular/router';
 import { EventService } from '../../../services/event.service';
+import { apiErrorMessage } from '../../../services/api-error';
 
 @Component({
   selector: 'app-client-events.page',
@@ -13,9 +14,25 @@ import { EventService } from '../../../services/event.service';
 export class ClientEventsPage {
   private readonly eventService = inject(EventService);
 
-  events: Event[] = this.eventService.getAll();
-  featured: Event[] = this.events.slice(0, 3);
+  events: Event[] = [];
+  featured: Event[] = [];
   featuredIndex = 0;
+  loading = true;
+  errorMessage = '';
+
+  constructor() {
+    this.eventService.getAll().subscribe({
+      next: (events) => {
+        this.events = events;
+        this.featured = events.slice(0, 3);
+        this.loading = false;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = apiErrorMessage(error);
+        this.loading = false;
+      },
+    });
+  }
 
   getFeatured(): Event | undefined {
     return this.featured[this.featuredIndex];

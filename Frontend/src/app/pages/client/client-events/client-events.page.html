@@ -1,4 +1,10 @@
 <section class="events-section container">
+  @if (loading) {
+    <p class="text-secondary" role="status">Cargando eventos...</p>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+  }
 
   <!-- Bloque central destacado -->
   @if(getFeatured(); as item){
