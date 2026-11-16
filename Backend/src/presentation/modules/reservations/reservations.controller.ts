@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { HandleError } from "../../../domain/errors/handle.error";
 import { ReservationsService } from "./reservations.service";
+import { currentUser } from "../../middleware/auth.middleware";
 
 export class ReservationsController {
   private readonly reservationsService = new ReservationsService();
@@ -15,7 +16,7 @@ export class ReservationsController {
 
   create = async (req: Request, res: Response): Promise<void> => {
     try {
-      res.status(201).json(await this.reservationsService.create(req.body));
+      res.status(201).json(await this.reservationsService.create({ ...req.body, identificacion: currentUser(req).identificacion }));
     } catch (error) {
       HandleError.error(error, res);
     }

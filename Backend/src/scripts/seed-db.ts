@@ -13,7 +13,8 @@ async function seedDatabase(): Promise<void> {
 
     const sql = await readFile(sqlPath, "utf-8");
 
-    await pool.query(sql);
+    await pool.query("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
+    await pool.query(sql.replaceAll("'123456'", "crypt('123456', gen_salt('bf'))"));
 
     console.log("Datos insertados correctamente");
   } catch (error) {

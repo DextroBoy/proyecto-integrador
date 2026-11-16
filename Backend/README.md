@@ -6,7 +6,7 @@ y devuelve JSON. El frontend nunca se conecta directo a la base de datos.
 
 ## Cómo levantarlo
 
-1. Copiar las variables de entorno: copia `.env.example` como `.env` y ajusta los valores.
+1. Copiar las variables de entorno: copia `.env.example` como `.env`, ajusta la base y genera un `JWT_SECRET` largo y local.
 2. Levantar PostgreSQL y pgAdmin con Docker: `docker compose up -d`.
 3. Instalar dependencias: `npm install`.
 4. Iniciar el servidor en modo desarrollo: `npm run dev` (o `npm start`).
@@ -17,6 +17,7 @@ El servidor queda disponible en `http://localhost:3000`.
 
 - Crear las tablas: `npm run db:init` (ejecuta `src/database/init.sql`).
 - Cargar datos de prueba: `npm run db:seed` (ejecuta `src/database/seed.sql`).
+  El seed transforma las claves de ejemplo en hashes bcrypt mediante `pgcrypto`.
 
 Los módulos están en `src/presentation/modules` y separan Models, Services,
 Controllers y Routes.
@@ -24,6 +25,9 @@ Controllers y Routes.
 ## APIs disponibles
 
 - `POST /api/auth/login`: recibe `{ "email": "...", "password": "..." }`.
+- `POST /api/auth/register`: crea un CLIENTE y su perfil en una transacción. Recibe `identificacion`, `nombre`, `direccion`, `email`, `password` e `id_ciudad`.
+- Login y registro devuelven `{ user, token }`; nunca devuelven `clave`.
+- `/api/personas`, `/api/clientes`, `/api/agentes` y `/api/administradores` tienen `GET`, `GET /:id`, `POST`, `PUT /:id` y `DELETE /:id`; requieren JWT y rol ADMIN.
 - `GET /api/countries` y `GET /api/countries/:id`: consulta países.
 - `POST /api/countries`: recibe `{ "nombre": "Colombia" }`.
 - `PUT /api/countries/:id`: actualiza el nombre de un país.
@@ -37,15 +41,17 @@ Controllers y Routes.
 - `GET /api/admin/reports?year=2026`: consulta los resúmenes y reportes
   disponibles para el año indicado; si se omite, usa el año actual.
 - `GET /api/events` y `GET /api/events/:id`: consulta eventos.
-- `POST /api/events`: crea un evento; requiere `identificacion` (agente),
+- `POST /api/events`: requiere token AGENTE; `identificacion` se toma del token,
+  no del frontend. Recibe
   `id_ciudad`, `nombre`, `teatro`, `capacidad`, `descripcion`, `precio`,
   `fecha_inicio` y `fecha_fin`. `estado` es opcional y por defecto es `PROGRAMADO`.
 - `GET /api/reservations` y `GET /api/reservations?cliente=3001`: consulta reservas.
-- `POST /api/reservations`: recibe `identificacion` (cliente), `id_evento`,
+- `POST /api/reservations`: requiere token CLIENTE; `identificacion` se toma del token. Recibe `id_evento`,
   `entradas` y, opcionalmente, `observacion`.
 - `PATCH /api/reservations/:id/estado`: recibe `{ "estado": "CONFIRMADA" }`.
 
-Los eventos y reservas se devuelven con los campos que consume el frontend
+Todos los GET de eventos y reservas requieren autenticación; los cambios de
+estado requieren AGENTE o ADMIN. Los eventos y reservas se devuelven con los campos que consume el frontend
 (`codigo`, `observaciones`, estados legibles y, en las reservas, `evento`).
 
 Los endpoints de ubicación devuelven objetos con los nombres de las columnas de
@@ -61,5 +67,5 @@ campo `observacion`, que es el campo disponible en el esquema.
 
 Los servicios Angular de ubicación y reportes usan `http://localhost:3000/api`
 por defecto. La URL se puede reemplazar con el token `API_BASE_URL`. Los
-componentes nuevos todavía deben integrarse en las rutas y el contenedor
-administrativo de Angular.
+La gestión de cuentas y reportes ya está integrada en el contenedor
+administrativo; la gestión de ubicaciones conserva su componente existente.

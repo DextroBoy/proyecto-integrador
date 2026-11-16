@@ -32,6 +32,7 @@ npm run dev
 
 La API queda disponible en `http://localhost:3000`; Swagger está en
 `http://localhost:3000/api/docs`. Revisa `Backend/.env.example` antes de iniciar.
+Genera un `JWT_SECRET` largo y local en `.env`; no publiques su valor.
 
 ### Frontend
 
@@ -51,22 +52,23 @@ defecto es `http://localhost:3000/api`.
 | Ruta | Contenido |
 | --- | --- |
 | `/` | Redirección a `/login`. |
-| `/login` | Formulario visual de inicio de sesión. |
-| `/register` | Formulario visual de registro. |
+| `/login` | Login conectado a `POST /api/auth/login`. |
+| `/register` | Registro de clientes conectado a `POST /api/auth/register`. |
 | `/client` | Área de cliente; redirige a `/client/events`. |
 | `/client/events` | Listado de eventos y enlaces para reservar; el flujo todavía conserva mocks. |
 | `/client/reservations` | Listado de reservas; el flujo todavía conserva mocks. |
 | `/client/create-reservation/:id` | Detalle de evento y formulario de reserva de demostración. |
 | `/client/create-reservation` | Redirección a `/client/events`. |
-| `/admin` | Panel administrativo que aún muestra reportes estáticos; el nuevo componente de reportes debe integrarse. |
+| `/admin` | Panel protegido para ADMIN, con reportes y gestión de cuentas. |
 | `/agent` | Área de agente; redirige a `/agent/events`. |
 | `/agent/events` | Tabla estática de eventos registrados. |
 | `/agent/create-event` | Formulario visual para registrar un evento. |
 | `/agent/reservations` | Tabla estática para administrar reservas. |
 
-Las rutas no tienen autenticación ni guards de acceso. Los componentes de
-administración de ubicaciones y reportes todavía no están conectados desde
-`app.routes.ts`.
+Las áreas de cliente, agente y administrador tienen guards por rol. El frontend
+envía el JWT como `Authorization: Bearer ...`; el backend obtiene la identidad
+desde ese token. Eventos y reservas validan el rol y usan la identificación del
+token, no una enviada por el frontend.
 
 ## Datos mock y limitaciones
 
@@ -83,12 +85,9 @@ administración de ubicaciones y reportes todavía no están conectados desde
   sus cambios solo viven mientras la aplicación está abierta y se restablecen al
   recargar. Aunque el backend y los nuevos servicios de ubicación/reportes
   existen, esas pantallas todavía no están conectadas a ellos.
-- No hay pagos ni persistencia en el navegador.
-- Los formularios de `/login` y `/register` no tienen lógica de autenticación o
-  registro conectada.
-- Las pantallas de `/admin` y `/agent` muestran contenido fijo. Sus formularios,
-  selectores y botones no guardan eventos, actualizan reservas ni generan
-  reportes dinámicamente.
+- No hay pagos. Algunas vistas de eventos y reservas conservan datos mock de los
+  integrantes y deben conectarse progresivamente a sus endpoints protegidos.
+- La gestión de cuentas y reportes ya está integrada en `/admin`.
 - Las imágenes de eventos son marcadores visuales (`placehold.co`), no imágenes
   almacenadas del catálogo.
 
