@@ -1,0 +1,245 @@
+<section class="container py-4">
+  <header class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+      <h1>Reportes del sistema</h1>
+      <p class="text-secondary mb-0">Información consultada desde la base de datos.</p>
+    </div>
+    <form class="d-flex align-items-end gap-2" (ngSubmit)="loadReports()">
+      <div>
+        <label class="form-label mb-1" for="report-year">Año</label>
+        <input
+          id="report-year"
+          class="form-control"
+          type="number"
+          name="year"
+          min="1900"
+          max="9999"
+          [(ngModel)]="year"
+          required
+        />
+      </div>
+      <button class="btn btn-primary" type="submit" [disabled]="loading">
+        Consultar
+      </button>
+    </form>
+  </header>
+
+  @if (loading) {
+    <p role="status">Cargando reportes...</p>
+  }
+  @if (errorMessage) {
+    <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+  }
+
+  @if (reports; as data) {
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-lg">
+        <article class="card summary-card"><div class="card-body">
+          <span>Clientes</span><strong>{{ data.summary.clientes }}</strong>
+        </div></article>
+      </div>
+      <div class="col-6 col-lg">
+        <article class="card summary-card"><div class="card-body">
+          <span>Agentes</span><strong>{{ data.summary.agentes }}</strong>
+        </div></article>
+      </div>
+      <div class="col-6 col-lg">
+        <article class="card summary-card"><div class="card-body">
+          <span>Administradores</span><strong>{{ data.summary.administradores }}</strong>
+        </div></article>
+      </div>
+      <div class="col-6 col-lg">
+        <article class="card summary-card"><div class="card-body">
+          <span>Reservas</span><strong>{{ data.summary.reservas }}</strong>
+        </div></article>
+      </div>
+      <div class="col-6 col-lg">
+        <article class="card summary-card"><div class="card-body">
+          <span>Eventos</span><strong>{{ data.summary.eventos }}</strong>
+        </div></article>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-xl-6">
+        <section class="card report-card h-100">
+          <div class="card-body">
+            <h2 class="h5">Ingresos confirmados por mes ({{ data.year }})</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Mes</th><th class="text-end">Ingresos</th></tr></thead>
+                <tbody>
+                  @for (item of data.monthlyRevenue; track item.mes) {
+                    <tr><td>{{ monthName(item.mes) }}</td><td class="text-end">{{ money(item.ingresos) }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="2" class="text-secondary">No hay ingresos confirmados.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <section class="card report-card h-100">
+          <div class="card-body">
+            <h2 class="h5">Reservas por evento y mes ({{ data.year }})</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Evento</th><th>Mes</th><th class="text-end">Reservas</th></tr></thead>
+                <tbody>
+                  @for (item of data.eventReservationsByMonth; track item.evento_id + '-' + item.mes) {
+                    <tr><td>{{ item.evento || 'Evento sin nombre' }}</td><td>{{ monthName(item.mes) }}</td><td class="text-end">{{ item.reservas }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="3" class="text-secondary">No hay reservas para el año consultado.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <section class="card report-card h-100">
+          <div class="card-body">
+            <h2 class="h5">Promedio de ingresos por agente</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Agente</th><th class="text-end">Promedio</th></tr></thead>
+                <tbody>
+                  @for (item of data.averageRevenueByAgent; track item.identificacion) {
+                    <tr><td>{{ item.nombre }}</td><td class="text-end">{{ money(item.promedio_ingresos) }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="2" class="text-secondary">No hay agentes registrados.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <section class="card report-card h-100">
+          <div class="card-body">
+            <h2 class="h5">Promedio de ingresos por cliente</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Cliente</th><th class="text-end">Promedio</th></tr></thead>
+                <tbody>
+                  @for (item of data.averageRevenueByClient; track item.identificacion) {
+                    <tr><td>{{ item.nombre }}</td><td class="text-end">{{ money(item.promedio_ingresos) }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="2" class="text-secondary">No hay clientes registrados.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12">
+        <section class="card report-card">
+          <div class="card-body">
+            <h2 class="h5">Eventos por agente y ciudad ({{ data.year }})</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Agente</th><th>Ciudad</th><th class="text-end">Eventos</th></tr></thead>
+                <tbody>
+                  @for (item of data.eventsByAgentAndCity; track item.agente + '-' + item.ciudad) {
+                    <tr><td>{{ item.agente }}</td><td>{{ item.ciudad }}</td><td class="text-end">{{ item.eventos }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="3" class="text-secondary">No hay eventos registrados.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12">
+        <section class="card report-card">
+          <div class="card-body">
+            <h2 class="h5">Eventos por país, departamento y ciudad ({{ data.year }})</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Evento</th><th>País</th><th>Departamento</th><th>Ciudad</th></tr></thead>
+                <tbody>
+                  @for (item of data.eventsByLocation; track item.evento + '-' + item.ciudad) {
+                    <tr><td>{{ item.evento }}</td><td>{{ item.pais }}</td><td>{{ item.departamento }}</td><td>{{ item.ciudad }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="4" class="text-secondary">No hay eventos para el año consultado.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12">
+        <section class="card report-card">
+          <div class="card-body">
+            <h2 class="h5">Historial de reservas ({{ data.year }})</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Cliente</th><th>Evento</th><th>Fecha</th><th>Entradas</th><th>Estado</th></tr></thead>
+                <tbody>
+                  @for (item of data.reservationHistory; track item.cliente + '-' + item.fecha + '-' + item.evento) {
+                    <tr><td>{{ item.cliente }}</td><td>{{ item.evento || 'Evento sin nombre' }}</td><td>{{ item.fecha || 'Sin fecha' }}</td><td>{{ item.entradas ?? '—' }}</td><td>{{ item.estado }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="5" class="text-secondary">No hay reservas para el año consultado.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <section class="card report-card h-100">
+          <div class="card-body">
+            <h2 class="h5">Reservas canceladas</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Reserva</th><th>Cliente</th><th>Evento</th><th>Causa registrada</th></tr></thead>
+                <tbody>
+                  @for (item of data.canceledReservations; track item.reserva_id) {
+                    <tr><td>#{{ item.reserva_id }}</td><td>{{ item.cliente }}</td><td>{{ item.evento || 'Evento sin nombre' }}</td><td>{{ item.causa || 'Sin causa registrada' }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="4" class="text-secondary">No hay reservas canceladas.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="col-12 col-xl-6">
+        <section class="card report-card h-100">
+          <div class="card-body">
+            <h2 class="h5">Eventos cancelados</h2>
+            <div class="table-responsive">
+              <table class="table table-sm">
+                <thead><tr><th>Evento</th><th>Causa registrada</th></tr></thead>
+                <tbody>
+                  @for (item of data.canceledEvents; track item.evento_id) {
+                    <tr><td>{{ item.evento || 'Evento sin nombre' }}</td><td>{{ item.causa || 'Sin causa registrada' }}</td></tr>
+                  } @empty {
+                    <tr><td colspan="2" class="text-secondary">No hay eventos cancelados.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  }
+</section>
