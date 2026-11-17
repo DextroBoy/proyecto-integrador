@@ -43,16 +43,16 @@
     <div class="user-info">
 
       <div class="user-avatar">
-        {{ authService.getInitials() }}
+        {{ getInitials() }}
       </div>
 
       <div class="user-data">
         <span class="user-name">
-          {{ authService.currentUser()?.nombre }}
+          {{ authService.user()?.nombre }}
         </span>
 
         <span class="user-role">
-          {{ authService.currentUser()?.rol }}
+          {{ authService.user()?.rol }}
         </span>
       </div>
 

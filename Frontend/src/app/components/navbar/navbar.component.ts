@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 
 interface NavbarConfig {
   url: string;
@@ -68,5 +69,12 @@ export class NavbarComponent {
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  getInitials(): string {
+    const name = this.authService.user()?.nombre.trim();
+    return name
+      ? name.split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? '').join('')
+      : '';
   }
 }
