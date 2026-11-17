@@ -5,6 +5,7 @@ import swaggerUi from 'swagger-ui-express';
 import { pool } from "../config/database";
 import { swaggerSpec } from '../config/swagger';
 import { Options } from "../domain/interfaces/server.interface";
+import { HandleError } from "../domain/errors/handle.error";
 
 /**
  * Clase que representa el servidor Express de la aplicación.
@@ -69,6 +70,10 @@ export class Server {
 
     //* Routes
     this.app.use(this.routes);
+
+    this.app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+      HandleError.error(error, res);
+    });
 
     //* Swagger Docs
     this.app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));

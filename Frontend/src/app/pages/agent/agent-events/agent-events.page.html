@@ -1,50 +1,69 @@
 <section id="seccion-eventos-registrados">
-  <h2>Eventos registrados</h2>
+  <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+    <h2>Eventos registrados</h2>
+    <a class="btn btn-primary" routerLink="/agent/create-event">Registrar evento</a>
+  </div>
 
-  <table border="1" id="tabla-eventos-registrados">
-    <thead>
-      <tr>
-        <th>Código</th>
-        <th>Nombre</th>
-        <th>Teatro</th>
-        <th>Ciudad</th>
-        <th>Inicio</th>
-        <th>Capacidad</th>
-        <th>Precio base</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>EV-001</td>
-        <td>Concierto de rock</td>
-        <td>Teatro Municipal</td>
-        <td>Cali</td>
-        <td>2026-11-15 20:00</td>
-        <td>500</td>
-        <td>$ 80.000</td>
-        <td class="estado-en-boleteria">En Boletería</td>
-      </tr>
-      <tr>
-        <td>EV-002</td>
-        <td>Festival de teatro</td>
-        <td>Teatro Gran Rex</td>
-        <td>Tuluá</td>
-        <td>2026-12-02 19:00</td>
-        <td>300</td>
-        <td>$ 45.000</td>
-        <td class="estado-programado">Programado</td>
-      </tr>
-      <tr>
-        <td>EV-003</td>
-        <td>Festival de jazz</td>
-        <td>Teatro Colón</td>
-        <td>Bogotá</td>
-        <td>2026-10-20 18:00</td>
-        <td>400</td>
-        <td>$ 60.000</td>
-        <td class="estado-cancelado">Cancelado</td>
-      </tr>
-    </tbody>
-  </table>
+  @if (loading) {
+    <p role="status">Cargando tus eventos...</p>
+  }
+  @if (errorMessage) {
+    <p class="alert alert-danger" role="alert">{{ errorMessage }}</p>
+  }
+  @if (successMessage) {
+    <p class="alert alert-success" role="status">{{ successMessage }}</p>
+  }
+
+  <div class="table-responsive">
+    <table class="table align-middle" id="tabla-eventos-registrados">
+      <thead>
+        <tr>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Teatro</th>
+          <th>Ciudad</th>
+          <th>Inicio</th>
+          <th>Capacidad</th>
+          <th>Precio base</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (event of events; track event.codigo) {
+          <tr>
+            <td>{{ event.codigo }}</td>
+            <td>{{ event.nombre }}</td>
+            <td>{{ event.teatro }}</td>
+            <td>{{ event.ciudad }}</td>
+            <td>{{ event.fecha_inicio | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ event.capacidad }}</td>
+            <td>{{ event.precio | currency: 'COP' : 'symbol-narrow' : '1.0-0' : 'es-CO' }}</td>
+            <td>{{ event.estado }}</td>
+            <td class="text-nowrap">
+              <a
+                class="btn btn-sm btn-outline-primary me-2"
+                [routerLink]="['/agent/create-event']"
+                [queryParams]="{ id: event.codigo }"
+              >Editar</a>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                [disabled]="deletingCode === event.codigo"
+                (click)="deleteEvent(event)"
+              >
+                {{ deletingCode === event.codigo ? 'Eliminando...' : 'Eliminar' }}
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          @if (!loading && !errorMessage) {
+            <tr>
+              <td colspan="9" class="text-center text-secondary">Aún no tienes eventos registrados.</td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+  </div>
 </section>

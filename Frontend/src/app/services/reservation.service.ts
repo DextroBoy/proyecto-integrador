@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { Reservation, ReservationState } from '../interfaces/reservation.interface';
-import { API_BASE_URL } from './api.config';
+import { API_BASE_URL } from './api-base-url';
 
 type ReservationPayload = Omit<Reservation, 'fecha' | 'evento'> & {
   fecha: string;
@@ -15,20 +15,19 @@ type ReservationPayload = Omit<Reservation, 'fecha' | 'evento'> & {
 function mapReservation(reservation: ReservationPayload): Reservation {
   return {
     ...reservation,
-    fecha: new Date(reservation.fecha),
+    fecha: new Date(`${reservation.fecha.slice(0, 10)}T12:00:00`),
     evento: {
       ...reservation.evento,
-      fecha_inicio: new Date(reservation.evento.fecha_inicio),
-      fecha_fin: new Date(reservation.evento.fecha_fin),
+      fecha_inicio: new Date(`${reservation.evento.fecha_inicio}T12:00:00`),
+      fecha_fin: new Date(`${reservation.evento.fecha_fin}T12:00:00`),
     },
   };
 }
 
 @Injectable({ providedIn: 'root' })
 export class ReservationService {
-  private readonly url = `${API_BASE_URL}/reservations`;
-
-  constructor(private readonly http: HttpClient) {}
+  private readonly http = inject(HttpClient);
+  private readonly url = `${inject(API_BASE_URL)}/reservations`;
 
   getAll(): Observable<Reservation[]> {
     return this.http

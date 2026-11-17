@@ -10,6 +10,7 @@ import { ClientCreateReservationPage } from './pages/client/client-create-reserv
 import { AgentEventsPage } from './pages/agent/agent-events/agent-events.page';
 import { AgentReservationsPage } from './pages/agent/agent-reservations/agent-reservations.page';
 import { AgentCreateEventPage } from './pages/agent/agent-create-event/agent-create-event.page';
+import { authGuard, roleGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
   {
     path: 'client',
     component: ClientPage,
+    canActivate: [authGuard, roleGuard(['CLIENTE'])],
     children: [
       { path: 'events', component: ClientEventsPage },
       { path: 'reservations', component: ClientReservationsPage },
@@ -26,10 +28,11 @@ export const routes: Routes = [
       { path: '', redirectTo: 'events', pathMatch: 'full' },
     ],
   },
-  { path: 'admin', component: AdminPage },
+  { path: 'admin', component: AdminPage, canActivate: [authGuard, roleGuard(['ADMIN'])] },
   {
     path: 'agent',
     component: AgentPage,
+    canActivate: [authGuard, roleGuard(['AGENTE'])],
     children: [
       { path: 'events', component: AgentEventsPage },
       { path: 'reservations', component: AgentReservationsPage },

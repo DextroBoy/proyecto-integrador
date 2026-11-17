@@ -1,15 +1,30 @@
 export interface Event {
   codigo: number;
-    nombre: string;
-    descripcion: string;
-    teatro: string;
-    ciudad: string;
-    fecha_inicio: Date;
-    fecha_fin: Date;
-    capacidad: number;
-    precio: number;
-    observaciones: string;
-    estado: EventState;
+  identificacion: number;
+  id_ciudad: number;
+  nombre: string;
+  descripcion: string | null;
+  teatro: string | null;
+  ciudad: string;
+  fecha_inicio: Date | null;
+  fecha_fin: Date | null;
+  capacidad: number | null;
+  precio: number | null;
+  observaciones: string | null;
+  estado: EventState;
+}
+
+export interface EventPayload {
+  id_ciudad: number;
+  nombre: string;
+  descripcion: string;
+  teatro: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  capacidad: number;
+  precio: number;
+  observaciones: string;
+  estado: EventState;
 }
 
 export type EventState =

@@ -7,6 +7,10 @@ import { EventsRoutes } from "./modules/events/events.routes";
 import { ExampleRoutes } from "./modules/example/example.routes";
 import { ReservationsRoutes } from "./modules/reservations/reservations.routes";
 import { ReportsRoutes } from "./modules/admin/reports/reports.routes";
+import { PersonRoutes } from "./modules/person/person.routes";
+import { ClientRoutes } from "./modules/client/client.routes";
+import { AgentRoutes } from "./modules/agent/agent.routes";
+import { AdminAccountRoutes } from "./modules/admin/accounts/admin.routes";
 
 export class AppRoutes {
 
@@ -16,6 +20,10 @@ export class AppRoutes {
 
     // Definir rutas
     apiRouter.use("/auth", AuthRoutes.routes);
+    apiRouter.use("/personas", PersonRoutes.routes);
+    apiRouter.use("/clientes", ClientRoutes.routes);
+    apiRouter.use("/agentes", AgentRoutes.routes);
+    apiRouter.use("/administradores", AdminAccountRoutes.routes);
     apiRouter.use("/countries", CountriesRoutes.routes);
     apiRouter.use("/departments", DepartmentsRoutes.routes);
     apiRouter.use("/cities", CitiesRoutes.routes);

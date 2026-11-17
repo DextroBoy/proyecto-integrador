@@ -9,6 +9,7 @@
     "db:init": "tsnd --transpile-only src/scripts/init-db.ts",
     "db:seed": "tsnd --transpile-only src/scripts/seed-db.ts",
     "typecheck": "tsc --noEmit",
+    "test": "node -r ts-node/register --test test/events.test.cjs",
     "test:reservations": "node --test -r ts-node/register src/presentation/modules/reservations/reservations.service.test.ts"
   },
   "keywords": [],
@@ -16,10 +17,12 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "17.2.3",
     "env-var": "7.5.0",
     "express": "5.2.1",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.23.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
@@ -28,6 +31,7 @@
     "@faker-js/faker": "10.1.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.23.1",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",

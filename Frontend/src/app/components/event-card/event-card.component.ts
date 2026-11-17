@@ -31,7 +31,7 @@ export class EventCardComponent {
   }
 
   getDate(): string {
-    if (!this.event) {
+    if (!this.event?.fecha_inicio) {
       return '';
     }
     return this.event.fecha_inicio.toLocaleDateString('es-CO', {
@@ -42,8 +42,8 @@ export class EventCardComponent {
   }
 
   getPrice(): string {
-    if (!this.event) {
-      return '';
+    if (!this.event || this.event.precio === null) {
+      return '—';
     }
     return '$' + this.event.precio.toLocaleString('es-CO');
   }

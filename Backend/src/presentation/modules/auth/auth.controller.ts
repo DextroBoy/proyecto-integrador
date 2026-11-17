@@ -18,4 +18,9 @@ export class AuthController {
       HandleError.error(error, res);
     }
   };
+
+  register = async (req: Request, res: Response): Promise<void> => {
+    try { res.status(201).json(await this.authService.register(req.body)); }
+    catch (error) { HandleError.error(error, res); }
+  };
 }

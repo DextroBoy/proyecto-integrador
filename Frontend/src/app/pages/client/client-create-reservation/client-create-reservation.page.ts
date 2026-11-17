@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { RouterLink, ActivatedRoute } from '@angular/router';
 import { Event } from '../../../interfaces/event.interface';
 import { EventService } from '../../../services/event.service';
@@ -11,27 +12,33 @@ import { apiErrorMessage } from '../../../services/api-error';
   templateUrl: './client-create-reservation.page.html',
   styleUrl: './client-create-reservation.page.scss',
 })
-export class ClientCreateReservationPage {
+export class ClientCreateReservationPage implements OnInit {
 
-  private route = inject(ActivatedRoute);
-  private eventService = inject(EventService);
-  private reservationService = inject(ReservationService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly eventService = inject(EventService);
+  private readonly reservationService = inject(ReservationService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   event: Event | null = null;
   quantity = 1;
   reserved = false;
-  loading = true;
+  loading = false;
   submitting = false;
   errorMessage = '';
   reservationCode: number | null = null;
 
-  constructor() {
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (!Number.isSafeInteger(id) || id < 1) {
       this.errorMessage = 'El evento solicitado no es válido.';
-      this.loading = false;
       return;
     }
+
+    this.loading = true;
     this.eventService.getByCode(id).subscribe({
       next: (event) => {
         this.event = event;

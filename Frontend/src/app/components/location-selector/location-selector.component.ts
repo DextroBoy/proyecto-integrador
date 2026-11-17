@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Component, EventEmitter, inject, OnInit, Output, PLATFORM_ID } from '@angular/core';
 import { LocationSelection } from '../../interfaces/location.interface';
 import { getApiErrorMessage } from '../../services/api-error';
 import { LocationService } from '../../services/location.service';
@@ -14,6 +14,7 @@ import { LocationService } from '../../services/location.service';
 export class LocationSelectorComponent implements OnInit {
   private static nextInstanceId = 0;
   private readonly locationService = inject(LocationService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   @Output() readonly selectionChange = new EventEmitter<LocationSelection>();
 
@@ -32,7 +33,9 @@ export class LocationSelectorComponent implements OnInit {
   loadingCities = false;
 
   ngOnInit(): void {
-    this.loadCountries();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadCountries();
+    }
   }
 
   selectCountry(rawId: string): void {

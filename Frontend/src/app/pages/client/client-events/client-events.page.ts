@@ -1,4 +1,5 @@
-import { Component, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { Event } from '../../../interfaces/event.interface';
 import { EventCardComponent } from '../../../components/event-card/event-card.component';
 import { RouterLink } from '@angular/router';
@@ -11,16 +12,21 @@ import { apiErrorMessage } from '../../../services/api-error';
   templateUrl: './client-events.page.html',
   styleUrl: './client-events.page.scss',
 })
-export class ClientEventsPage {
+export class ClientEventsPage implements OnInit {
   private readonly eventService = inject(EventService);
+  private readonly platformId = inject(PLATFORM_ID);
 
   events: Event[] = [];
   featured: Event[] = [];
   featuredIndex = 0;
-  loading = true;
+  loading = false;
   errorMessage = '';
 
-  constructor() {
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.loading = true;
     this.eventService.getAll().subscribe({
       next: (events) => {
         this.events = events;
@@ -57,7 +63,10 @@ export class ClientEventsPage {
     }
   }
 
-  getDate(fecha: Date): string {
+  getDate(fecha: Date | null): string {
+    if (!fecha) {
+      return 'Fecha por definir';
+    }
     return fecha.toLocaleDateString('es-CO', {
       day: '2-digit',
       month: 'long',
@@ -65,8 +74,8 @@ export class ClientEventsPage {
     });
   }
 
-  getPrice(value: number): string {
-    return '$' + value.toLocaleString('es-CO');
+  getPrice(value: number | null): string {
+    return value === null ? '—' : '$' + value.toLocaleString('es-CO');
   }
 
 }

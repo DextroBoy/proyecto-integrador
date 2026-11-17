@@ -164,8 +164,12 @@
       </div>
     </div>
   } @else {
-    <div class="alert alert-warning">
-      No encontramos el evento que buscas.
-    </div>
+    @if (loading) {
+      <p role="status">Cargando evento...</p>
+    } @else {
+      <div class="alert alert-warning" role="alert">
+        {{ errorMessage || 'No encontramos el evento que buscas.' }}
+      </div>
+    }
   }
 </section>
