@@ -51,6 +51,22 @@
   gap: 0.5rem;
 }
 
+.location-field {
+  min-width: 0;
+}
+
+.location-label {
+  color: #343a40;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.location-error {
+  margin: 0;
+  color: #b02a37;
+  font-size: 0.85rem;
+}
+
 .campo-formulario label {
   color: #343a40;
   font-size: 0.9rem;
@@ -70,6 +86,11 @@
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
+}
+
+.campo-formulario app-location-selector {
+  display: block;
+  width: 100%;
 }
 
 .campo-formulario input:focus {

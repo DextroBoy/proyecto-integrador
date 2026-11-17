@@ -59,7 +59,7 @@ export class Server {
    */
   async start(): Promise<void> {
     //* Conexion DataBase
-    this.databaseConnect();
+    await this.databaseConnect();
 
     //* Middlewares
     this.app.use(cors());

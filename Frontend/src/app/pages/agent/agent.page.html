@@ -1,18 +1,13 @@
-<header id="encabezado-agente">
-  <h1>Panel del agente</h1>
-  <p>Registro de eventos y administración de reservas</p>
+<app-navbar></app-navbar>
 
-  <nav id="menu-agente">
-    <a routerLink="/agent/events">Eventos registrados</a>
-    <a routerLink="/agent/create-event">Registrar evento</a>
-    <a routerLink="/agent/reservations">Administrar reservas</a>
-  </nav>
-</header>
-
-<main id="contenido-agente">
+<main class="agent-dashboard">
+  <header class="agent-heading">
+    <h1>Panel del agente</h1>
+    <p>Administra tus eventos y las reservas relacionadas.</p>
+  </header>
   <router-outlet></router-outlet>
 </main>
 
-<footer id="pie-agente">
-  <p>© 2026 Proyecto Integrador - Gestión de eventos</p>
+<footer class="agent-footer">
+  © 2026 Proyecto Integrador · Gestión de eventos
 </footer>

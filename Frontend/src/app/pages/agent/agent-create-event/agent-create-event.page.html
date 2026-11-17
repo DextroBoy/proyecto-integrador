@@ -133,12 +133,15 @@
           <p>Ciudad actual: {{ currentEvent.ciudad }}. Selecciona una nueva ubicación solo si deseas cambiarla.</p>
         }
         <app-location-selector (selectionChange)="onLocationChange($event)" />
+        @if (selectedCityId === null) {
+          <p class="location-hint">Selecciona país, departamento y ciudad para habilitar el registro.</p>
+        }
       </div>
 
       <button
         type="submit"
         id="boton-registrar-evento"
-        [disabled]="saving || eventFormRef.invalid"
+        [disabled]="saving || eventFormRef.invalid || selectedCityId === null"
       >
         {{ saving ? 'Guardando...' : editing ? 'Guardar cambios' : 'Registrar evento' }}
       </button>

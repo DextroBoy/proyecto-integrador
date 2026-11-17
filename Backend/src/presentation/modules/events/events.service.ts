@@ -214,9 +214,12 @@ export class EventsService {
     }
 
     const fechaInicio = validDate(body.fecha_inicio, "La fecha de inicio");
-    const fechaFin = validDate(body.fecha_fin, "La fecha de finalización");
-    if (fechaFin <= fechaInicio) {
+    let fechaFin = validDate(body.fecha_fin, "La fecha de finalización");
+    if (fechaFin < fechaInicio) {
       throw CustomError.badRequest("La fecha de finalización debe ser posterior al inicio.");
+    }
+    if (fechaFin === fechaInicio) {
+      fechaFin = `${fechaFin}T23:59:59`;
     }
 
     const state = body.estado === undefined || body.estado === null

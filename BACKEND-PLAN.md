@@ -12,23 +12,24 @@ Cuando hablamos de **APIs** nos referimos a los endpoints HTTP que expone el bac
 
 ## Traducción página → endpoint
 
-| Página | Funcionalidad | Endpoint | Módulo a crear |
+| Página | Funcionalidad | Endpoint | Módulo |
 | --- | --- | --- | --- |
 | Login | Iniciar sesión | `POST /api/auth/login` | auth |
-| Register | Registrar usuario | `POST /api/auth/register` | auth |
-| Client Events | Ver todos los eventos | `GET /api/events` (+ `GET /api/events/:id`) | events |
-| Create Reservation | Realizar reserva | `POST /api/reservations` | reservations |
-| Client Reservations | Ver mis reservas con estado | `GET /api/reservations?cliente=X` | reservations |
-| Agent Create Event | Registrar evento | `POST /api/events` | events |
-| Agent Events | Ver eventos registrados | `GET /api/events` | events |
-| Agent Reservations | Ver reservas y actualizar estado | `GET /api/reservations` + `PATCH /api/reservations/:id/estado` | reservations |
-| Admin Reports | Reportes (gráficas/tablas) | `GET /api/admin/reports` | reports |
+| Register | Registrar cliente | `POST /api/auth/register` | auth |
+| Client Events | Ver eventos | `GET /api/events` (+ `GET /api/events/:id`) | events |
+| Create Reservation | Reservar cupos | `POST /api/reservations` | reservations |
+| Client Reservations | Ver/cancelar reservas propias | `GET /api/reservations` + `PUT /api/reservations/:id` | reservations |
+| Agent Create Event | Crear/editar eventos propios | `POST /api/events` + `PUT /api/events/:id` | events |
+| Agent Reservations | Ver y actualizar reservas de sus eventos | `GET /api/reservations` + `PATCH /api/reservations/:id/estado` | reservations |
+| Admin Reports | Reportes protegidos para ADMIN | `GET /api/admin/reports` | reports |
+| Admin Accounts | CRUD de cuentas por rol | `/api/personas`, `/api/clientes`, `/api/agentes`, `/api/administradores` | person/client/agent/admin |
+| Admin Locations | CRUD de ubicación | `/api/countries`, `/api/departments`, `/api/cities` | countries/departments/cities |
 
 ## Qué debe tener el backend para que exista cada funcionalidad
 
 La cadena técnica que hace posible cada endpoint, en orden:
 
-1. **Tablas en `init.sql`**: `users`, `events` y `reservations`, con sus llaves primarias, foráneas y restricciones.
+1. **Tablas en `init.sql`**: `persona`, `cliente`, `agente`, `admin`, `evento`, `reserva` y catálogos de ubicación/estados, con llaves y restricciones.
 2. **Conexión en `config/database.ts`**: se leen las credenciales desde `.env` para conectar con PostgreSQL.
 3. **Rutas en `modules/*/*.routes.ts`**: cada módulo declara sus endpoints y los asocia a un controller.
 4. **Controller**: recibe la petición, valida los datos de entrada y construye la respuesta.
@@ -52,6 +53,7 @@ Backend/
     │   └── swagger.schemas.ts
     ├── database/
     │   ├── init.sql
+    │   ├── migrate-legacy.sql
     │   └── seed.sql
     ├── domain/
     │   ├── interfaces/
@@ -66,22 +68,19 @@ Backend/
         └── seed-db.ts
 ```
 
-> El módulo `example` es la plantilla de referencia. Los módulos reales (`auth`, `events`, `reservations`, `reports`) los construye el estudiante copiando ese mismo patrón (rutas → controller → service).
+> Los módulos reales separan rutas, controladores, servicios y modelos. `example` se conserva como referencia.
 
 > Para el manejo de variables de entorno se debe usar un archivo `.env.example` versionado junto con un `.gitignore` que excluya el `.env` real. El profesor commitea su `.env`; no repetir esa práctica para no exponer credenciales.
 
-## Orden de integración sugerido
-
-1. **events** — es la entidad central: sin eventos no hay reservas, y los reportes dependen de ambos.
-2. **auth** — aporta usuarios y sesión, necesarios para asociar reservas a un cliente.
-3. **reservations** — depende de que existan eventos y usuarios.
-4. **reports** — agrega y resume información de eventos y reservas ya existentes.
-
 ## Estado actual
 
-- [x] Frontend reestructurado (interfaces y components en `src/app`, master merged).
-- [ ] Servicios del front creados con mocks (`event.service.ts` y `reservation.service.ts` siguen sueltos en `src/app/services`, pendiente reorganizarlos por perfil).
-- [x] Carpeta `Frontend/` del monorepo.
-- [x] Carpeta `Backend/` base (copiada del profesor, con `.env.example` y `.gitignore` propios).
-- [ ] `docker-compose` levantando PostgreSQL.
-- [ ] Módulos reales del backend.
+- [x] Frontend Angular consume servicios HTTP para autenticación, eventos, reservas, cuentas, ubicación y reportes.
+- [x] Backend organizado por módulos y capas; endpoints de autenticación, cuentas, eventos, reservas, ubicación y reportes.
+- [x] Autorización por JWT/rol y alcance de reservas por el usuario autenticado.
+- [x] Inicialización transaccional y migración del esquema anterior sin vaciar el volumen.
+- [x] Pruebas de eventos, reservas y frontend; las pruebas de reservas requieren PostgreSQL.
+- [x] PostgreSQL se levanta con Docker Compose. Ejecutar `npm run db:init` antes de iniciar la API.
+
+Las semillas de prueba se cargan solo sobre una base vacía (`npm run db:seed`).
+El archivo `.env` local debe tener un `JWT_SECRET` generado localmente y no se
+debe versionar.

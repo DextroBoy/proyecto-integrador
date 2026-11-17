@@ -14,18 +14,28 @@ describe('AdminService', () => {
     http = TestBed.inject(HttpTestingController);
   });
 
+  afterEach(() => http.verify());
+
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
   it('uses the account CRUD endpoints', () => {
     service.list('clientes').subscribe();
-    http.expectOne({ method: 'GET', url: 'http://localhost:3000/api/clientes' }).flush([]);
+    const list = http.expectOne({ method: 'GET', url: 'http://localhost:3000/api/clientes' });
+    expect(list.request.method).toBe('GET');
+    list.flush([]);
     service.create('clientes', { identificacion: 7 }).subscribe();
-    http.expectOne({ method: 'POST', url: 'http://localhost:3000/api/clientes' }).flush({});
+    const create = http.expectOne({ method: 'POST', url: 'http://localhost:3000/api/clientes' });
+    expect(create.request.body).toEqual({ identificacion: 7 });
+    create.flush({});
     service.update('clientes', 7, { nombre: 'Nuevo' }).subscribe();
-    http.expectOne({ method: 'PUT', url: 'http://localhost:3000/api/clientes/7' }).flush({});
+    const update = http.expectOne({ method: 'PUT', url: 'http://localhost:3000/api/clientes/7' });
+    expect(update.request.body).toEqual({ nombre: 'Nuevo' });
+    update.flush({});
     service.remove('clientes', 7).subscribe();
-    http.expectOne({ method: 'DELETE', url: 'http://localhost:3000/api/clientes/7' }).flush(null);
+    const remove = http.expectOne({ method: 'DELETE', url: 'http://localhost:3000/api/clientes/7' });
+    expect(remove.request.method).toBe('DELETE');
+    remove.flush(null);
   });
 });

@@ -14,6 +14,14 @@
   font-weight: 700;
 }
 
+.events-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
 #tabla-eventos-registrados {
   width: 100%;
   min-width: 720px;
@@ -37,6 +45,24 @@
   color: #495057;
   font-size: 0.85rem;
   white-space: nowrap;
+}
+
+#tabla-eventos-registrados .event-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+#tabla-eventos-registrados .event-actions .btn {
+  display: inline-flex;
+  min-width: 5.25rem;
+  min-height: 2rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.8rem;
+  line-height: 1.2;
 }
 
 #tabla-eventos-registrados tbody tr:hover {
@@ -68,5 +94,10 @@
 @media (max-width: 575.98px) {
   #seccion-eventos-registrados {
     padding: 1rem;
+  }
+
+  .events-heading {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

@@ -25,7 +25,7 @@ describe('Client API services', () => {
 
   it('loads events from the API and converts event dates', () => {
     const service = TestBed.inject(EventService);
-    let receivedStartDate: Date | undefined;
+    let receivedStartDate: Date | null | undefined;
 
     service.getAll().subscribe((events) => {
       receivedStartDate = events[0]?.fecha_inicio;

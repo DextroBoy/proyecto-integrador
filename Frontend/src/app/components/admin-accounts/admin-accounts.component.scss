@@ -1,0 +1,238 @@
+:host {
+  display: block;
+}
+
+.admin-accounts {
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  border: 1px solid #e6ebf2;
+  border-radius: 1rem;
+  background: #fff;
+  box-shadow: 0 6px 24px rgb(30 45 70 / 5%);
+}
+
+.accounts-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-eyebrow {
+  margin: 0 0 0.3rem;
+  color: #0d6efd;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.accounts-heading h2 {
+  margin: 0;
+  color: #17243a;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.section-description {
+  margin: 0.4rem 0 0;
+  color: #6b7688;
+  font-size: 0.9rem;
+}
+
+.role-selector,
+.account-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  color: #36445b;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.role-selector {
+  min-width: 13rem;
+}
+
+.role-selector select,
+.account-field input,
+.account-field select {
+  width: 100%;
+  min-height: 2.65rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #d5dce7;
+  border-radius: 0.55rem;
+  background-color: #fff;
+  color: #263248;
+  font: inherit;
+  font-weight: 400;
+}
+
+.role-selector select:focus,
+.account-field input:focus,
+.account-field select:focus {
+  border-color: #6ea8fe;
+  outline: 3px solid rgb(13 110 253 / 13%);
+}
+
+.account-field input:disabled {
+  background: #f0f3f8;
+  color: #6b7688;
+}
+
+.account-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid #e9edf4;
+  border-radius: 0.8rem;
+  background: #f8faff;
+}
+
+.form-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+  grid-column: 1 / -1;
+}
+
+.button {
+  min-height: 2.45rem;
+  padding: 0.5rem 0.85rem;
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.button-primary {
+  background: #0d6efd;
+  color: #fff;
+}
+
+.button-primary:hover {
+  background: #0b5ed7;
+}
+
+.button-secondary,
+.button-edit {
+  border-color: #cdd7e5;
+  background: #fff;
+  color: #34445f;
+}
+
+.button-secondary:hover,
+.button-edit:hover {
+  background: #edf4ff;
+  border-color: #9dbdf0;
+  color: #0a58ca;
+}
+
+.button-delete {
+  border-color: #f1b9be;
+  background: #fff;
+  color: #b02a37;
+}
+
+.button-delete:hover {
+  background: #fff0f1;
+  border-color: #dc3545;
+}
+
+.error-message {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid #f1b9be;
+  border-radius: 0.55rem;
+  background: #fff0f1;
+  color: #842029;
+}
+
+.loading-message {
+  color: #687386;
+}
+
+.accounts-table-wrapper {
+  margin-top: 1.25rem;
+  overflow-x: auto;
+  border: 1px solid #e9edf4;
+  border-radius: 0.75rem;
+}
+
+.accounts-table {
+  width: 100%;
+  min-width: 640px;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.accounts-table th {
+  padding: 0.85rem 1rem;
+  background: #f5f7fb;
+  color: #5b6678;
+  font-size: 0.73rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.accounts-table td {
+  padding: 0.85rem 1rem;
+  border-top: 1px solid #edf0f5;
+  color: #36445b;
+  font-size: 0.86rem;
+}
+
+.accounts-table tbody tr:hover {
+  background: #fbfcff;
+}
+
+.role-badge {
+  display: inline-flex;
+  padding: 0.25rem 0.55rem;
+  border-radius: 99px;
+  background: #edf4ff;
+  color: #0a58ca;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.table-actions {
+  white-space: nowrap;
+}
+
+.table-actions .button + .button {
+  margin-left: 0.4rem;
+}
+
+.empty-state {
+  padding: 1.5rem !important;
+  color: #6b7688 !important;
+  text-align: center;
+}
+
+@media (max-width: 850px) {
+  .account-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 575.98px) {
+  .accounts-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .role-selector {
+    min-width: 0;
+  }
+
+  .account-form {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+}

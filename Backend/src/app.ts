@@ -5,7 +5,7 @@ import { Server } from "./presentation/server";
 /**
  * Función principal que instancia y arranca el servidor.
  */
-function main(): void {
+async function main(): Promise<void> {
   const server = new Server({
     port: envs.PORT,
     publicPath: envs.PUBLIC_PATH,
@@ -18,7 +18,7 @@ function main(): void {
       dbPassword: envs.DB_PASSWORD
     }
   });
-  server.start();
+  await server.start();
 }
 
 /**
@@ -29,5 +29,10 @@ function main(): void {
  * para iniciar la aplicación automáticamente.
  */
 (async () => {
-  main();
+  try {
+    await main();
+  } catch (error) {
+    console.error("No se pudo iniciar el servidor:", error);
+    process.exitCode = 1;
+  }
 })();

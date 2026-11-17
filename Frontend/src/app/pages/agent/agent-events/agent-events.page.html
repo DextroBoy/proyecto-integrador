@@ -1,5 +1,5 @@
 <section id="seccion-eventos-registrados">
-  <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
+  <div class="events-heading">
     <h2>Eventos registrados</h2>
     <a class="btn btn-primary" routerLink="/agent/create-event">Registrar evento</a>
   </div>
@@ -32,17 +32,17 @@
       <tbody>
         @for (event of events; track event.codigo) {
           <tr>
-            <td>{{ event.codigo }}</td>
-            <td>{{ event.nombre }}</td>
-            <td>{{ event.teatro }}</td>
-            <td>{{ event.ciudad }}</td>
-            <td>{{ event.fecha_inicio | date: 'yyyy-MM-dd' }}</td>
-            <td>{{ event.capacidad }}</td>
-            <td>{{ event.precio | currency: 'COP' : 'symbol-narrow' : '1.0-0' : 'es-CO' }}</td>
-            <td>{{ event.estado }}</td>
-            <td class="text-nowrap">
+            <td>{{ event.codigo || '—' }}</td>
+            <td>{{ event.nombre || '—' }}</td>
+            <td>{{ event.teatro || '—' }}</td>
+            <td>{{ event.ciudad || '—' }}</td>
+            <td>{{ event.fecha_inicio ? (event.fecha_inicio | date: 'yyyy-MM-dd') : '—' }}</td>
+            <td>{{ event.capacidad ?? '—' }}</td>
+            <td>{{ event.precio !== null ? (event.precio | currency: 'COP' : 'symbol-narrow' : '1.0-0' : 'es-CO') : '—' }}</td>
+            <td>{{ event.estado || '—' }}</td>
+            <td class="event-actions">
               <a
-                class="btn btn-sm btn-outline-primary me-2"
+                class="btn btn-sm btn-outline-primary"
                 [routerLink]="['/agent/create-event']"
                 [queryParams]="{ id: event.codigo }"
               >Editar</a>

@@ -1,28 +1,23 @@
 # Proyecto Integrador
 
-Aplicación web de gestión de eventos con frontend Angular, API REST en Node.js y
-base de datos PostgreSQL. Las vistas de eventos y reservas existentes aún tienen
-flujos demostrativos; los componentes de ubicación y reportes ya tienen servicios
-y APIs, pero requieren integrarse al contenedor y las rutas globales de Angular.
+Aplicación para gestionar eventos y reservas con Angular, una API REST en
+Node.js/Express y PostgreSQL. El frontend consume la API; no se conecta
+directamente a la base de datos.
 
 ## Requisitos
 
-- Node.js compatible con Angular 20.
-- npm.
-- Docker Desktop para PostgreSQL local.
-
-Las dependencias y versiones del frontend y backend se definen en sus respectivos
-archivos `package.json` y `package-lock.json`.
+- Node.js compatible con Angular 20 y npm.
+- Docker Desktop.
 
 ## Instalación y ejecución
 
 ### Backend y base de datos
 
-Desde PowerShell:
+Desde PowerShell, en la raíz del proyecto:
 
 ```powershell
 cd Backend
-Copy-Item .env.example .env
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 npm install
 docker compose up -d
 npm run db:init
@@ -30,9 +25,26 @@ npm run db:seed
 npm run dev
 ```
 
-La API queda disponible en `http://localhost:3000`; Swagger está en
-`http://localhost:3000/api/docs`. Revisa `Backend/.env.example` antes de iniciar.
-Genera un `JWT_SECRET` largo y local en `.env`; no publiques su valor.
+En `Backend/.env`, reemplaza el marcador de `JWT_SECRET` por una clave aleatoria
+generada localmente. Desde PowerShell, dentro de `Backend`, puedes generarla así:
+
+```powershell
+$bytes = New-Object byte[] 48
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($bytes)
+[Convert]::ToBase64String($bytes)
+$rng.Dispose()
+```
+
+Copia el texto que imprime PowerShell después de `JWT_SECRET=` en `Backend/.env`.
+Cada instalación puede usar una clave distinta; conserva la misma entre
+reinicios para no invalidar las sesiones activas. No publiques ni agregues el
+archivo `.env` al repositorio. No vuelvas a ejecutar `db:seed` sobre una base que
+ya tenga datos. `db:init` migra el esquema anterior y conserva sus registros
+dentro de una transacción.
+
+La API queda en `http://localhost:3000` y Swagger en
+`http://localhost:3000/api/docs`.
 
 ### Frontend
 
@@ -41,58 +53,47 @@ En una segunda terminal:
 ```powershell
 cd Frontend
 npm install
-npm run start
+npm start
 ```
 
-Abre [http://localhost:4200/](http://localhost:4200/). La URL de la API por
-defecto es `http://localhost:3000/api`.
+Abre `http://localhost:4200/`. La URL de la API por defecto es
+`http://localhost:3000/api`.
 
-## Rutas disponibles
+## Funcionalidades
 
-| Ruta | Contenido |
+| Ruta | Funcionalidad |
 | --- | --- |
-| `/` | Redirección a `/login`. |
-| `/login` | Login conectado a `POST /api/auth/login`. |
-| `/register` | Registro de clientes conectado a `POST /api/auth/register`. |
-| `/client` | Área de cliente; redirige a `/client/events`. |
-| `/client/events` | Listado de eventos y enlaces para reservar; el flujo todavía conserva mocks. |
-| `/client/reservations` | Listado de reservas; el flujo todavía conserva mocks. |
-| `/client/create-reservation/:id` | Detalle de evento y formulario de reserva de demostración. |
-| `/client/create-reservation` | Redirección a `/client/events`. |
-| `/admin` | Panel protegido para ADMIN, con reportes y gestión de cuentas. |
-| `/agent` | Área de agente; redirige a `/agent/events`. |
-| `/agent/events` | Tabla estática de eventos registrados. |
-| `/agent/create-event` | Formulario visual para registrar un evento. |
-| `/agent/reservations` | Tabla estática para administrar reservas. |
+| `/login` | Inicio de sesión conectado a PostgreSQL. |
+| `/register` | Registro de clientes con ubicación real. |
+| `/client/events` | Consulta eventos y permite iniciar reservas. |
+| `/client/reservations` | Consulta y cancela las reservas del cliente. |
+| `/client/create-reservation/:id` | Crea reservas con validación de cupos. |
+| `/agent/events` | Consulta y administra los eventos del agente. |
+| `/agent/create-event` | Crea o actualiza eventos. |
+| `/agent/reservations` | Consulta, actualiza estados y elimina reservas de sus eventos. |
+| `/admin` | Reportes, cuentas y administración de ubicación, protegido para ADMIN. |
 
-Las áreas de cliente, agente y administrador tienen guards por rol. El frontend
-envía el JWT como `Authorization: Bearer ...`; el backend obtiene la identidad
-desde ese token. Eventos y reservas validan el rol y usan la identificación del
-token, no una enviada por el frontend.
+Las operaciones de la API requieren autenticación y rol según el recurso. Los
+eventos y reservas se asocian al usuario autenticado; el backend comprueba cupos
+de forma transaccional y una reserva cancelada deja de ocupar capacidad.
 
-## Datos mock y limitaciones
+Los datos visibles en las pantallas funcionales se cargan desde la API. Las
+pruebas unitarias pueden usar datos simulados para aislar componentes; eso no
+significa que la aplicación en ejecución use mocks. Las imágenes de eventos son
+marcadores visuales y no forman parte del catálogo de la base de datos.
 
-- Los eventos están definidos directamente en `EventService`: actualmente hay
-  cinco eventos de ejemplo, con código, nombre, ubicación, fechas, capacidad,
-  precio, observaciones y estado.
-- Las reservas iniciales están definidas en `ReservationService`: hay tres
-  reservas asociadas a esos eventos.
-- Al confirmar una reserva desde
-  `/client/create-reservation/:id`, se crea una reserva en memoria con un código
-  consecutivo, el precio calculado y estado `Reservada`. La cantidad permitida
-  es de 1 a 10 entradas.
-- Los flujos de eventos y reservas que muestran esas páginas aún usan mocks:
-  sus cambios solo viven mientras la aplicación está abierta y se restablecen al
-  recargar. Aunque el backend y los nuevos servicios de ubicación/reportes
-  existen, esas pantallas todavía no están conectadas a ellos.
-- No hay pagos. Algunas vistas de eventos y reservas conservan datos mock de los
-  integrantes y deben conectarse progresivamente a sus endpoints protegidos.
-- La gestión de cuentas y reportes ya está integrada en `/admin`.
-- Las imágenes de eventos son marcadores visuales (`placehold.co`), no imágenes
-  almacenadas del catálogo.
+## Comprobaciones
 
-## Tecnologías principales
+Desde `Backend`: `npm run typecheck`, `npm test` y
+`npm run test:reservations` (este último requiere PostgreSQL).
 
-- Angular 20 con enrutamiento y renderizado del lado del servidor configurado.
-- TypeScript.
-- Bootstrap 5, Bootstrap Icons y estilos SCSS.
+Desde `Frontend`: `npm run build` y `npm test -- --watch=false`.
+
+Consulta [Backend/README.md](./Backend/README.md) para los endpoints, permisos y
+detalles de la migración.
+
+## Tecnologías
+
+- Angular 20 y TypeScript.
+- Node.js, Express y PostgreSQL.
+- Bootstrap 5, Bootstrap Icons y SCSS.

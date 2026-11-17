@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { AuthService } from '../../services/auth/auth.service';
 
 import { AgentPage } from './agent.page';
 
@@ -10,7 +11,10 @@ describe('AgentPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AgentPage],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: { user: () => null, logout: () => undefined } },
+      ],
     })
     .compileComponents();
 

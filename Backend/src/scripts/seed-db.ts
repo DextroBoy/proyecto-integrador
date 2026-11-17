@@ -13,6 +13,18 @@ async function seedDatabase(): Promise<void> {
 
     const sql = await readFile(sqlPath, "utf-8");
 
+    const existingData = await pool.query<{ has_data: boolean }>(
+      `SELECT EXISTS (SELECT 1 FROM pais)
+          OR EXISTS (SELECT 1 FROM persona)
+          OR EXISTS (SELECT 1 FROM evento)
+          OR EXISTS (SELECT 1 FROM reserva) AS has_data;`
+    );
+    if (existingData.rows[0]?.has_data) {
+      throw new Error(
+        "La base ya contiene datos; el seed solo se ejecuta en una base vacía."
+      );
+    }
+
     await pool.query("CREATE EXTENSION IF NOT EXISTS pgcrypto;");
     await pool.query(sql.replaceAll("'123456'", "crypt('123456', gen_salt('bf'))"));
 

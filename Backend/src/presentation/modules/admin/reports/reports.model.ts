@@ -79,13 +79,14 @@ export class ReportsModel {
 
   async getMonthlyRevenue(year: number): Promise<MonthlyRevenue[]> {
     const result = await pool.query<MonthlyRevenue>(
-      `SELECT EXTRACT(MONTH FROM fecha)::integer AS mes,
+      `SELECT EXTRACT(MONTH FROM r.fecha_hora_reserva)::integer AS mes,
               COALESCE(SUM(total), 0)::float8 AS ingresos
-       FROM reserva
-       WHERE estado = 'CONFIRMADA'
-         AND fecha IS NOT NULL
-         AND EXTRACT(YEAR FROM fecha) = $1
-       GROUP BY EXTRACT(MONTH FROM fecha)
+       FROM reserva r
+       INNER JOIN estado_reserva sr ON sr.id = r.id_estado
+       WHERE sr.nombre = 'CONFIRMADA'
+         AND r.fecha_hora_reserva IS NOT NULL
+         AND EXTRACT(YEAR FROM r.fecha_hora_reserva) = $1
+       GROUP BY EXTRACT(MONTH FROM r.fecha_hora_reserva)
        ORDER BY mes;`,
       [year]
     );
@@ -94,15 +95,15 @@ export class ReportsModel {
 
   async getEventReservationsByMonth(year: number): Promise<EventReservationsByMonth[]> {
     const result = await pool.query<EventReservationsByMonth>(
-      `SELECT e.id AS evento_id,
+      `      SELECT e.id AS evento_id,
               e.nombre AS evento,
-              EXTRACT(MONTH FROM r.fecha)::integer AS mes,
+             EXTRACT(MONTH FROM r.fecha_hora_reserva)::integer AS mes,
               COUNT(r.id)::integer AS reservas
        FROM reserva r
        INNER JOIN evento e ON e.id = r.id_evento
-       WHERE r.fecha IS NOT NULL
-         AND EXTRACT(YEAR FROM r.fecha) = $1
-       GROUP BY e.id, e.nombre, EXTRACT(MONTH FROM r.fecha)
+      WHERE r.fecha_hora_reserva IS NOT NULL
+        AND EXTRACT(YEAR FROM r.fecha_hora_reserva) = $1
+      GROUP BY e.id, e.nombre, EXTRACT(MONTH FROM r.fecha_hora_reserva)
        ORDER BY e.nombre, mes;`,
       [year]
     );
@@ -111,19 +112,19 @@ export class ReportsModel {
 
   async getAverageRevenueByAgent(year: number): Promise<AverageRevenue[]> {
     const result = await pool.query<AverageRevenue>(
-      `SELECT a.identificacion,
-              p.nombre,
+      `SELECT a.num_identificacion::integer AS identificacion,
+              p.nombre_completo AS nombre,
               COALESCE(AVG(r.total), 0)::float8 AS promedio_ingresos
        FROM agente a
-       INNER JOIN persona p ON p.identificacion = a.identificacion
-       LEFT JOIN evento e ON e.identificacion = a.identificacion
+       INNER JOIN persona p ON p.num_identificacion = a.num_identificacion
+       LEFT JOIN evento e ON e.num_identificacion = a.num_identificacion
        LEFT JOIN reserva r
          ON r.id_evento = e.id
-        AND r.estado = 'CONFIRMADA'
-        AND r.fecha IS NOT NULL
-        AND EXTRACT(YEAR FROM r.fecha) = $1
-       GROUP BY a.identificacion, p.nombre
-       ORDER BY p.nombre;`,
+        AND r.id_estado = (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA')
+        AND r.fecha_hora_reserva IS NOT NULL
+        AND EXTRACT(YEAR FROM r.fecha_hora_reserva) = $1
+       GROUP BY a.num_identificacion, p.nombre_completo
+       ORDER BY p.nombre_completo;`,
       [year]
     );
     return result.rows;
@@ -131,18 +132,18 @@ export class ReportsModel {
 
   async getAverageRevenueByClient(year: number): Promise<AverageRevenue[]> {
     const result = await pool.query<AverageRevenue>(
-      `SELECT c.identificacion,
-              p.nombre,
+      `SELECT c.num_identificacion::integer AS identificacion,
+              p.nombre_completo AS nombre,
               COALESCE(AVG(r.total), 0)::float8 AS promedio_ingresos
        FROM cliente c
-       INNER JOIN persona p ON p.identificacion = c.identificacion
+       INNER JOIN persona p ON p.num_identificacion = c.num_identificacion
        LEFT JOIN reserva r
-         ON r.identificacion = c.identificacion
-        AND r.estado = 'CONFIRMADA'
-        AND r.fecha IS NOT NULL
-        AND EXTRACT(YEAR FROM r.fecha) = $1
-       GROUP BY c.identificacion, p.nombre
-       ORDER BY p.nombre;`,
+         ON r.num_identificacion = c.num_identificacion
+        AND r.id_estado = (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA')
+        AND r.fecha_hora_reserva IS NOT NULL
+        AND EXTRACT(YEAR FROM r.fecha_hora_reserva) = $1
+       GROUP BY c.num_identificacion, p.nombre_completo
+       ORDER BY p.nombre_completo;`,
       [year]
     );
     return result.rows;
@@ -150,17 +151,17 @@ export class ReportsModel {
 
   async getEventsByAgentAndCity(year: number): Promise<EventsByAgentAndCity[]> {
     const result = await pool.query<EventsByAgentAndCity>(
-      `SELECT p.nombre AS agente,
+      `SELECT p.nombre_completo AS agente,
               c.nombre AS ciudad,
               COUNT(e.id)::integer AS eventos
        FROM evento e
-       INNER JOIN agente a ON a.identificacion = e.identificacion
-       INNER JOIN persona p ON p.identificacion = a.identificacion
+       INNER JOIN agente a ON a.num_identificacion = e.num_identificacion
+       INNER JOIN persona p ON p.num_identificacion = a.num_identificacion
        INNER JOIN ciudad c ON c.id = e.id_ciudad
-       WHERE e.fecha_inicio IS NULL
-          OR EXTRACT(YEAR FROM e.fecha_inicio) = $1
-       GROUP BY p.nombre, c.nombre
-       ORDER BY p.nombre, c.nombre;`,
+       WHERE e.fecha_hora_inicio IS NULL
+          OR EXTRACT(YEAR FROM e.fecha_hora_inicio) = $1
+       GROUP BY p.nombre_completo, c.nombre
+       ORDER BY p.nombre_completo, c.nombre;`,
       [year]
     );
     return result.rows;
@@ -176,8 +177,8 @@ export class ReportsModel {
        INNER JOIN ciudad c ON c.id = e.id_ciudad
        INNER JOIN departamento d ON d.id = c.id_departamento
        INNER JOIN pais pa ON pa.id = d.id_pais
-       WHERE e.fecha_inicio IS NULL
-          OR EXTRACT(YEAR FROM e.fecha_inicio) = $1
+       WHERE e.fecha_hora_inicio IS NULL
+          OR EXTRACT(YEAR FROM e.fecha_hora_inicio) = $1
        ORDER BY pa.nombre, d.nombre, c.nombre, e.nombre;`,
       [year]
     );
@@ -186,18 +187,19 @@ export class ReportsModel {
 
   async getReservationHistory(year: number): Promise<ReservationHistory[]> {
     const result = await pool.query<ReservationHistory>(
-      `SELECT p.nombre AS cliente,
+      `SELECT p.nombre_completo AS cliente,
               e.nombre AS evento,
-              r.fecha::text AS fecha,
+              r.fecha_hora_reserva::text AS fecha,
               r.entradas,
-              r.estado
+              sr.nombre AS estado
        FROM reserva r
-       INNER JOIN cliente c ON c.identificacion = r.identificacion
-       INNER JOIN persona p ON p.identificacion = c.identificacion
+       INNER JOIN cliente c ON c.num_identificacion = r.num_identificacion
+       INNER JOIN persona p ON p.num_identificacion = c.num_identificacion
        INNER JOIN evento e ON e.id = r.id_evento
-       WHERE r.fecha IS NULL
-          OR EXTRACT(YEAR FROM r.fecha) = $1
-       ORDER BY r.fecha DESC NULLS LAST, r.id DESC;`,
+       INNER JOIN estado_reserva sr ON sr.id = r.id_estado
+       WHERE r.fecha_hora_reserva IS NULL
+          OR EXTRACT(YEAR FROM r.fecha_hora_reserva) = $1
+       ORDER BY r.fecha_hora_reserva DESC NULLS LAST, r.id DESC;`,
       [year]
     );
     return result.rows;
@@ -206,16 +208,17 @@ export class ReportsModel {
   async getCanceledReservations(year: number): Promise<CanceledReservation[]> {
     const result = await pool.query<CanceledReservation>(
       `SELECT r.id AS reserva_id,
-              p.nombre AS cliente,
+              p.nombre_completo AS cliente,
               e.nombre AS evento,
-              r.observacion AS causa
+              COALESCE(r.causa_cancelacion, r.observacion) AS causa
        FROM reserva r
-       INNER JOIN cliente c ON c.identificacion = r.identificacion
-       INNER JOIN persona p ON p.identificacion = c.identificacion
+       INNER JOIN cliente c ON c.num_identificacion = r.num_identificacion
+       INNER JOIN persona p ON p.num_identificacion = c.num_identificacion
        INNER JOIN evento e ON e.id = r.id_evento
-       WHERE r.estado = 'CANCELADA'
-         AND (r.fecha IS NULL OR EXTRACT(YEAR FROM r.fecha) = $1)
-       ORDER BY r.fecha DESC NULLS LAST, r.id DESC;`,
+       INNER JOIN estado_reserva sr ON sr.id = r.id_estado
+       WHERE sr.nombre = 'CANCELADA'
+         AND (r.fecha_hora_reserva IS NULL OR EXTRACT(YEAR FROM r.fecha_hora_reserva) = $1)
+       ORDER BY r.fecha_hora_reserva DESC NULLS LAST, r.id DESC;`,
       [year]
     );
     return result.rows;
@@ -223,11 +226,14 @@ export class ReportsModel {
 
   async getCanceledEvents(year: number): Promise<CanceledEvent[]> {
     const result = await pool.query<CanceledEvent>(
-      `SELECT id AS evento_id, nombre AS evento, observacion AS causa
-       FROM evento
-       WHERE estado = 'CANCELADO'
-         AND (fecha_inicio IS NULL OR EXTRACT(YEAR FROM fecha_inicio) = $1)
-       ORDER BY fecha_inicio DESC NULLS LAST, id DESC;`,
+      `SELECT e.id AS evento_id,
+              e.nombre AS evento,
+              COALESCE(e.causa_cancelacion, e.observacion) AS causa
+       FROM evento e
+       INNER JOIN estado_evento se ON se.id = e.id_estado
+       WHERE se.nombre = 'CANCELADO'
+         AND (e.fecha_hora_inicio IS NULL OR EXTRACT(YEAR FROM e.fecha_hora_inicio) = $1)
+       ORDER BY e.fecha_hora_inicio DESC NULLS LAST, e.id DESC;`,
       [year]
     );
     return result.rows;

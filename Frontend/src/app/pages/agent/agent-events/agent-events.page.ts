@@ -23,6 +23,12 @@ export class AgentEventsPage implements OnInit {
   successMessage = '';
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      const eventMessage = window.history.state?.eventMessage;
+      if (typeof eventMessage === 'string') {
+        this.successMessage = eventMessage;
+      }
+    }
     this.loadEvents();
   }
 

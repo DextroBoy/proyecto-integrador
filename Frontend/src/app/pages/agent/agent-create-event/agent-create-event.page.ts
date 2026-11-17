@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
 import { Event, EventPayload, EventState } from '../../../interfaces/event.interface';
 import { LocationSelection } from '../../../interfaces/location.interface';
@@ -29,6 +29,7 @@ interface EventForm {
 })
 export class AgentCreateEventPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly eventService = inject(EventService);
   private readonly platformId = inject(PLATFORM_ID);
 
@@ -123,14 +124,12 @@ export class AgentCreateEventPage implements OnInit {
     const wasEditing = this.editing;
 
     request.subscribe({
-      next: (event) => {
-        this.currentEvent = event;
-        this.eventId = event.codigo;
-        this.selectedCityId = event.id_ciudad;
-        this.successMessage = wasEditing
+      next: () => {
+        const eventMessage = wasEditing
           ? 'El evento se actualizó correctamente.'
           : 'El evento se creó correctamente.';
         this.saving = false;
+        void this.router.navigate(['/agent/events'], { state: { eventMessage } });
       },
       error: (error: unknown) => {
         this.errorMessage = getApiErrorMessage(error)

@@ -1,78 +1,47 @@
 
 <nav class="app-navbar">
+  <div class="navbar-brand-section">
+    <a class="navbar-brand" [routerLink]="homeRoute" aria-label="Ir al inicio de QCorito">
+      <span class="brand-icon"><i class="bi bi-calendar-event"></i></span>
+      <span class="brand-name">QCorito</span>
+    </a>
+  </div>
 
-    <div class="navbar-brand-section">
-
+  <div class="navbar-navigation" aria-label="Navegación principal">
+    @for (item of navbarConfig; track item.label) {
+      @if (item.fragment) {
         <a
-        routerLink="client/events"
+          class="nav-link"
+          [routerLink]="item.url"
+          [fragment]="item.fragment"
+          routerLinkActive="active"
         >
-          <div class="brand-icon">
-            <i class="bi bi-calendar-event"></i>
-          </div>
-
-          <span class="brand-name">
-            QCorito
-          </span>
+          <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+          <span>{{ item.label }}</span>
         </a>
-
-    </div>
-
-
-
-
- <div class="navbar-navigation">
-
-    @for(item of navbarConfig; track item.url){
-      <a
-        [routerLink]="item.url"
-        routerLinkActive="active"
-        class="nav-link"
-      >
-        <i class="bi bi-{{ item.icon}}"></i>
-        <span>{{ item.label }}</span>
-      </a>
+      } @else {
+        <a class="nav-link" [routerLink]="item.url" routerLinkActive="active">
+          <i class="bi bi-{{ item.icon }}" aria-hidden="true"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      }
     }
-
-
-  </div>   
-
-
+  </div>
 
   <div class="navbar-user-section">
-
     <div class="user-info">
-
       <div class="user-avatar">
         {{ getInitials() }}
       </div>
-
       <div class="user-data">
-        <span class="user-name">
-          {{ authService.user()?.nombre }}
-        </span>
-
-        <span class="user-role">
-          {{ authService.user()?.rol }}
-        </span>
+        <span class="user-name">{{ authService.user()?.nombre }}</span>
+        <span class="user-role">{{ roleLabel }}</span>
       </div>
-
     </div>
 
-    <div class="user-actions">
-
-      <button
-        type="button"
-        class="logout-button"
-        (click)="logout()"
-      >
-        <i class="bi bi-box-arrow-right"></i>
-        <span>
-          Cerrar sesión
-        </span>
-      </button>
-
-    </div>
-
+    <button type="button" class="logout-button" (click)="logout()">
+      <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
+      <span>Cerrar sesión</span>
+    </button>
   </div>
-
 </nav>

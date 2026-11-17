@@ -99,6 +99,24 @@ test("accepts prices with MER precision and rejects prices beyond two decimals",
   );
 });
 
+test("supports same-day events by ending them at the end of that day", async () => {
+  let inserted;
+  const { service } = createService({
+    create: async (event) => {
+      inserted = event;
+      return { ...baseEvent, ...event };
+    },
+  });
+
+  await service.create({
+    ...validPayload,
+    fecha_inicio: "2026-10-15",
+    fecha_fin: "2026-10-15",
+  }, 7001);
+
+  assert.equal(inserted.fecha_fin, "2026-10-15T23:59:59");
+});
+
 test("invalid dates and missing cities return clear client errors", async () => {
   const { service } = createService({ cityExists: async () => false });
 

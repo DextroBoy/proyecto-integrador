@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { requireAuth, requireRole } from "../../middleware/auth.middleware";
 import { CountriesController } from "./countries.controller";
 
 export class CountriesRoutes {
@@ -8,9 +9,9 @@ export class CountriesRoutes {
 
     router.get("/", controller.getAll);
     router.get("/:id", controller.getById);
-    router.post("/", controller.create);
-    router.put("/:id", controller.update);
-    router.delete("/:id", controller.delete);
+    router.post("/", requireAuth, requireRole("ADMIN"), controller.create);
+    router.put("/:id", requireAuth, requireRole("ADMIN"), controller.update);
+    router.delete("/:id", requireAuth, requireRole("ADMIN"), controller.delete);
 
     return router;
   }
