@@ -22,7 +22,6 @@ npm install
 docker compose up -d
 npm run db:init
 npm run db:seed
-npm run dev
 ```
 
 En `Backend/.env`, reemplaza el marcador de `JWT_SECRET` por una clave aleatoria
@@ -43,6 +42,12 @@ archivo `.env` al repositorio. No vuelvas a ejecutar `db:seed` sobre una base qu
 ya tenga datos. `db:init` migra el esquema anterior y conserva sus registros
 dentro de una transacción.
 
+Con `JWT_SECRET` configurado, inicia el backend desde `Backend`:
+
+```powershell
+npm run dev
+```
+
 La API queda en `http://localhost:3000` y Swagger en
 `http://localhost:3000/api/docs`.
 
@@ -58,6 +63,21 @@ npm start
 
 Abre `http://localhost:4200/`. La URL de la API por defecto es
 `http://localhost:3000/api`.
+
+## Cuentas de prueba
+
+Después de ejecutar `npm run db:seed` sobre una base vacía, puedes iniciar
+sesión con una cuenta de cada rol:
+
+| Rol | Correo | Contraseña |
+| --- | --- | --- |
+| Administrador | `carlos@eventos.com` | `123456` |
+| Agente | `daniel@eventos.com` | `123456` |
+| Cliente | `juan@gmail.com` | `123456` |
+
+Son credenciales de demostración para desarrollo local; no las uses en un
+entorno público. El seed se ejecuta una sola vez en una base sin datos y se
+detiene si ya encuentra registros.
 
 ## Funcionalidades
 
@@ -76,6 +96,10 @@ Abre `http://localhost:4200/`. La URL de la API por defecto es
 Las operaciones de la API requieren autenticación y rol según el recurso. Los
 eventos y reservas se asocian al usuario autenticado; el backend comprueba cupos
 de forma transaccional y una reserva cancelada deja de ocupar capacidad.
+
+En la interfaz, el administrador gestiona cuentas y ubicaciones y consulta
+reportes; el agente administra sus eventos y las reservas de estos; el cliente
+consulta eventos y administra sus propias reservas.
 
 Los datos visibles en las pantallas funcionales se cargan desde la API. Las
 pruebas unitarias pueden usar datos simulados para aislar componentes; eso no
