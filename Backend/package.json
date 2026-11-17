@@ -8,7 +8,8 @@
     "dev": "tsnd --respawn --clear src/app.ts",
     "db:init": "tsnd --transpile-only src/scripts/init-db.ts",
     "db:seed": "tsnd --transpile-only src/scripts/seed-db.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node -r ts-node/register --test test/events.test.cjs"
   },
   "keywords": [],
   "author": "",

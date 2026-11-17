@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Event } from '../../../interfaces/event.interface';
 import { EventCardComponent } from '../../../components/event-card/event-card.component';
 import { RouterLink } from '@angular/router';
 import { EventService } from '../../../services/event.service';
+import { getApiErrorMessage } from '../../../services/api-error';
 
 @Component({
   selector: 'app-client-events.page',
@@ -10,12 +12,34 @@ import { EventService } from '../../../services/event.service';
   templateUrl: './client-events.page.html',
   styleUrl: './client-events.page.scss',
 })
-export class ClientEventsPage {
+export class ClientEventsPage implements OnInit {
   private readonly eventService = inject(EventService);
+  private readonly platformId = inject(PLATFORM_ID);
 
-  events: Event[] = this.eventService.getAll();
-  featured: Event[] = this.events.slice(0, 3);
+  events: Event[] = [];
+  featured: Event[] = [];
   featuredIndex = 0;
+  loading = false;
+  errorMessage = '';
+
+  ngOnInit(): void {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    this.loading = true;
+    this.eventService.getAll().subscribe({
+      next: (events) => {
+        this.events = events;
+        this.featured = events.slice(0, 3);
+        this.loading = false;
+      },
+      error: (error: unknown) => {
+        this.errorMessage = getApiErrorMessage(error)
+          ?? 'No se pudieron cargar los eventos. Intenta nuevamente.';
+        this.loading = false;
+      },
+    });
+  }
 
   getFeatured(): Event | undefined {
     return this.featured[this.featuredIndex];

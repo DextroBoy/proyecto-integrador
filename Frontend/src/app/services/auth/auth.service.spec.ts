@@ -26,6 +26,6 @@ describe('AuthService', () => {
     request.flush({ user: { identificacion: 1, nombre: 'User', email: 'user@example.com', rol: 'CLIENTE' }, token: 'token' });
     expect(service.token()).toBe('token');
     expect(service.user()?.rol).toBe('CLIENTE');
-    expect(service.user()).not.toHaveProperty('password');
+    expect('password' in (service.user() ?? {})).toBeFalse();
   });
 });

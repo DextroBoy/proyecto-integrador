@@ -11,6 +11,8 @@ export class EventsRoutes {
     router.get("/", controller.getAll);
     router.get("/:id", controller.getById);
     router.post("/", requireRole("AGENTE"), controller.create);
+    router.put("/:id", requireRole("AGENTE"), controller.update);
+    router.delete("/:id", requireRole("AGENTE"), controller.delete);
 
     return router;
   }

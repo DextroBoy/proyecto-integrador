@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+import { EventService } from '../../../services/event.service';
+import { ReservationService } from '../../../services/reservation.service';
 
 import { ClientCreateReservationPage } from './client-create-reservation.page';
 
@@ -10,7 +13,14 @@ describe('ClientCreateReservationPage', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ClientCreateReservationPage],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        {
+          provide: EventService,
+          useValue: { getByCode: jasmine.createSpy().and.returnValue(of(null)) },
+        },
+        { provide: ReservationService, useValue: { create: jasmine.createSpy() } },
+      ],
     })
     .compileComponents();
 

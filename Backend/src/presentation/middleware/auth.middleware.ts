@@ -7,9 +7,10 @@ const secret = process.env.JWT_SECRET;
 if (!secret) {
   throw new Error("JWT_SECRET es obligatorio y no debe estar en el repositorio.");
 }
+const jwtSecret: string = secret;
 
 export function signToken(user: AuthUser): string {
-  return jwt.sign(user, secret, { expiresIn: "8h" });
+  return jwt.sign(user, jwtSecret, { expiresIn: "8h" });
 }
 
 export function requireAuth(req: Request, _res: Response, next: NextFunction): void {
@@ -18,7 +19,7 @@ export function requireAuth(req: Request, _res: Response, next: NextFunction): v
     if (!header?.startsWith("Bearer ")) {
       throw CustomError.unAuthorized("Se requiere un token de acceso.");
     }
-    const payload = jwt.verify(header.slice(7), secret) as Partial<AuthUser>;
+    const payload = jwt.verify(header.slice(7), jwtSecret) as Partial<AuthUser>;
     if (!payload.identificacion || !payload.rol || !payload.email || !payload.nombre) {
       throw CustomError.unAuthorized("El token no contiene una identidad válida.");
     }

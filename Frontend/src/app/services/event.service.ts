@@ -1,85 +1,52 @@
-import { Injectable } from '@angular/core';
-import { Event } from '../interfaces/event.interface';
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
+import { API_BASE_URL } from './api-base-url';
+import { Event, EventPayload } from '../interfaces/event.interface';
+
+interface ApiEvent extends Omit<Event, 'fecha_inicio' | 'fecha_fin'> {
+  fecha_inicio: string;
+  fecha_fin: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-  private readonly events: Event[] = [
-    {
-      codigo: 1001,
-      nombre: 'Festival de Música del Valle',
-      descripcion: 'Festival con artistas nacionales y locales de diferentes géneros musicales.',
-      teatro: 'Coliseo de Ferias',
-      ciudad: 'Tuluá',
-      fecha_inicio: new Date('2026-10-15T18:00:00'),
-      fecha_fin: new Date('2026-10-15T23:30:00'),
-      capacidad: 5000,
-      precio: 85000,
-      observaciones: 'Apertura de puertas a las 5:00 PM.',
-      estado: 'Programado',
-    },
-    {
-      codigo: 1002,
-      nombre: 'Concierto Sinfónico de Primavera',
-      descripcion:
-        'Presentación de la Orquesta Sinfónica del Valle con repertorio clásico y contemporáneo.',
-      teatro: 'Teatro Municipal',
-      ciudad: 'Cali',
-      fecha_inicio: new Date('2026-10-20T19:00:00'),
-      fecha_fin: new Date('2026-10-20T21:30:00'),
-      capacidad: 1200,
-      precio: 65000,
-      observaciones: 'Venta de boletería habilitada en puntos autorizados.',
-      estado: 'En Boleteria',
-    },
-    {
-      codigo: 1003,
-      nombre: 'Rock al Parque Valle',
-      descripcion:
-        'Festival de rock con participación de bandas nacionales e internacionales.',
-      teatro: 'Estadio Doce de Octubre',
-      ciudad: 'Tuluá',
-      fecha_inicio: new Date('2026-10-06T17:00:00'),
-      fecha_fin: new Date('2026-10-06T23:00:00'),
-      capacidad: 8000,
-      precio: 45000,
-      observaciones: 'Evento actualmente en desarrollo.',
-      estado: 'En Vivo',
-    },
-    {
-      codigo: 1004,
-      nombre: 'Obra de Teatro: El Principito',
-      descripcion: 'Adaptación teatral del clásico literario El Principito.',
-      teatro: 'Teatro Municipal Enrique Buenaventura',
-      ciudad: 'Cali',
-      fecha_inicio: new Date('2026-09-28T19:00:00'),
-      fecha_fin: new Date('2026-09-28T21:00:00'),
-      capacidad: 900,
-      precio: 55000,
-      observaciones: 'Evento finalizado satisfactoriamente.',
-      estado: 'Finalizado',
-    },
-    {
-      codigo: 1005,
-      nombre: 'Concierto de Música Urbana',
-      descripcion:
-        'Concierto con los principales exponentes de música urbana de la región.',
-      teatro: 'Centro de Eventos Valle del Pacífico',
-      ciudad: 'Cali',
-      fecha_inicio: new Date('2026-10-10T19:00:00'),
-      fecha_fin: new Date('2026-10-10T23:00:00'),
-      capacidad: 6000,
-      precio: 75000,
-      observaciones:
-        'Evento cancelado por motivos logísticos. Se realizará devolución del dinero.',
-      estado: 'Cancelado',
-    },
-  ];
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = inject(API_BASE_URL);
 
-  getAll(): Event[] {
-    return [...this.events];
+  getAll(): Observable<Event[]> {
+    return this.http.get<ApiEvent[]>(`${this.apiUrl}/events`).pipe(
+      map((events) => events.map((event) => this.fromApi(event))),
+    );
   }
 
-  getByCode(code: number): Event | undefined {
-    return this.events.find((event) => event.codigo === code);
+  getByCode(code: number): Observable<Event> {
+    return this.http.get<ApiEvent>(`${this.apiUrl}/events/${code}`).pipe(
+      map((event) => this.fromApi(event)),
+    );
+  }
+
+  create(payload: EventPayload): Observable<Event> {
+    return this.http.post<ApiEvent>(`${this.apiUrl}/events`, payload).pipe(
+      map((event) => this.fromApi(event)),
+    );
+  }
+
+  update(code: number, payload: EventPayload): Observable<Event> {
+    return this.http.put<ApiEvent>(`${this.apiUrl}/events/${code}`, payload).pipe(
+      map((event) => this.fromApi(event)),
+    );
+  }
+
+  delete(code: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/events/${code}`);
+  }
+
+  private fromApi(event: ApiEvent): Event {
+    return {
+      ...event,
+      fecha_inicio: new Date(`${event.fecha_inicio}T12:00:00`),
+      fecha_fin: new Date(`${event.fecha_fin}T12:00:00`),
+    };
   }
 }

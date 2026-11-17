@@ -40,19 +40,27 @@ Controllers y Routes.
   `DELETE /api/cities/:id`.
 - `GET /api/admin/reports?year=2026`: consulta los resúmenes y reportes
   disponibles para el año indicado; si se omite, usa el año actual.
-- `GET /api/events` y `GET /api/events/:id`: consulta eventos.
-- `POST /api/events`: requiere token AGENTE; `identificacion` se toma del token,
-  no del frontend. Recibe
-  `id_ciudad`, `nombre`, `teatro`, `capacidad`, `descripcion`, `precio`,
-  `fecha_inicio` y `fecha_fin`. `estado` es opcional y por defecto es `PROGRAMADO`.
+- `GET /api/events` y `GET /api/events/:id`: requieren autenticación. CLIENTE
+  consulta todos los eventos; AGENTE recibe y consulta únicamente los propios.
+- `POST /api/events`: requiere token AGENTE; la identificación del agente se toma
+  del token, nunca del frontend. Recibe `id_ciudad`, `nombre`, `teatro`,
+  `capacidad`, `descripcion`, `precio`, `fecha_inicio` y `fecha_fin`.
+  `estado` es opcional y por defecto es `PROGRAMADO`.
+- `PUT /api/events/:id`: requiere token AGENTE y solo permite actualizar un evento
+  propio; recibe los mismos campos que la creación.
+- `DELETE /api/events/:id`: requiere token AGENTE y solo permite borrar eventos
+  propios. Devuelve `409 Conflict` si existe cualquier reserva asociada: el evento
+  debe conservarse para proteger su historial y evitar el borrado en cascada.
 - `GET /api/reservations` y `GET /api/reservations?cliente=3001`: consulta reservas.
 - `POST /api/reservations`: requiere token CLIENTE; `identificacion` se toma del token. Recibe `id_evento`,
   `entradas` y, opcionalmente, `observacion`.
 - `PATCH /api/reservations/:id/estado`: recibe `{ "estado": "CONFIRMADA" }`.
 
 Todos los GET de eventos y reservas requieren autenticación; los cambios de
-estado requieren AGENTE o ADMIN. Los eventos y reservas se devuelven con los campos que consume el frontend
-(`codigo`, `observaciones`, estados legibles y, en las reservas, `evento`).
+estado requieren AGENTE o ADMIN. Los eventos se devuelven con los campos que
+consume Angular (`codigo`, `identificacion`, `id_ciudad`, `observaciones` y
+estados legibles). Las fechas de evento son fechas calendario (`YYYY-MM-DD`),
+conforme al tipo `DATE` del esquema.
 
 Los endpoints de ubicación devuelven objetos con los nombres de las columnas de
 la base (`id`, `nombre`, `id_pais` e `id_departamento`). El borrado de una
