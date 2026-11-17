@@ -14,18 +14,19 @@ interface NavbarConfig {
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  private router = inject(Router);
+  private readonly router = inject(Router);
+  readonly authService = inject(AuthService);
 
   navbarConfig: NavbarConfig[] = [];
 
   clientConfig: NavbarConfig[] = [
     { url: '/client/events', label: 'Eventos', icon: 'calendar3' },
-    { url: '/client/reservations', label: 'Reservaciones', icon: 'calendar3'},
+    { url: '/client/reservations', label: 'Reservaciones', icon: 'ticket-perforated'},
   ]
 
   agentConfig: NavbarConfig[] = [
     { url: '/agent/events', label: 'Eventos', icon: 'calendar3' },
-    { url: '/agent/create-event', label: 'Crear Evento', icon: 'calendar3' },
+    { url: '/agent/create-event', label: 'Crear Evento', icon: 'plus-circle'},
   ]
 
   
@@ -62,5 +63,10 @@ export class NavbarComponent {
     }
 
     return 'client';
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

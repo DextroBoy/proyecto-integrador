@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS cliente (
 CREATE TABLE IF NOT EXISTS agente (
     num_identificacion VARCHAR(20) PRIMARY KEY,
     rol VARCHAR(20) NOT NULL DEFAULT 'AGENTE',
-    comision NUMERIC(12,2) NOT NULL DEFAULT 0,
+    comision NUMERIC(7,2) NOT NULL DEFAULT 0,
     experiencia VARCHAR(100),
 
     CONSTRAINT chk_agente_rol CHECK (rol = 'AGENTE'),
@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS agente (
 CREATE TABLE IF NOT EXISTS admin (
     num_identificacion VARCHAR(20) PRIMARY KEY,
     rol VARCHAR(20) NOT NULL DEFAULT 'ADMIN',
-    salario NUMERIC(12,2) NOT NULL DEFAULT 0,
+    salario NUMERIC(4,7) NOT NULL DEFAULT 0,
     horario VARCHAR(100),
 
     CONSTRAINT chk_admin_rol CHECK (rol = 'ADMIN'),

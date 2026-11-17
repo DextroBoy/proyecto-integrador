@@ -46,7 +46,7 @@ INSERT INTO ciudad (id_departamento, nombre) VALUES
 INSERT INTO persona (
     num_identificacion,
     tipo_identificacion,
-    nombre,
+    nombre_completo,
     direccion,
     correo_electronico,
     contrasena,
@@ -224,3 +224,23 @@ INSERT INTO reserva (
 
 -- Evento 10: Festival Gastronómico
 ('3007', 10, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-17 10:00:00', 80000, 2, 'Reserva confirmada', NULL);
+
+INSERT INTO persona_telefono (num_identificacion, telefono) VALUES
+('1001', '3001234567'),
+('1002', '3002345678'),
+('1003', '3003456789'),
+('2001', '3004567890'),
+('2002', '3005678901'),
+('2003', '3006789012'),
+('2004', '3007890123'),
+('2005', '3008901234'),
+('3001', '3009012345'),
+('3002', '3010123456'),
+('3003', '3011234567'),
+('3004', '3012345678'),
+('3005', '3013456789'),
+('3006', '3014567890'),
+('3007', '3015678901'),
+('3008', '3016789012'),
+('3009', '3017890123'),
+('3010', '3018901234');

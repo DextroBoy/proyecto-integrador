@@ -4,14 +4,14 @@
     <div class="navbar-brand-section">
 
         <a
-        routerLink="navbar-brand"
+        routerLink="client/events"
         >
           <div class="brand-icon">
             <i class="bi bi-calendar-event"></i>
           </div>
 
           <span class="brand-name">
-            NombreAPP
+            QCorito
           </span>
         </a>
 
@@ -28,7 +28,7 @@
         routerLinkActive="active"
         class="nav-link"
       >
-        <i class="bi bi-ticket-perforated"></i>
+        <i class="bi bi-{{ item.icon}}"></i>
         <span>{{ item.label }}</span>
       </a>
     }
@@ -43,16 +43,16 @@
     <div class="user-info">
 
       <div class="user-avatar">
-        iniciales usuario
+        {{ authService.getInitials() }}
       </div>
 
       <div class="user-data">
         <span class="user-name">
-          User name
+          {{ authService.currentUser()?.nombre }}
         </span>
 
         <span class="user-role">
-          Cliente = rol
+          {{ authService.currentUser()?.rol }}
         </span>
       </div>
 
@@ -63,9 +63,9 @@
       <button
         type="button"
         class="logout-button"
+        (click)="logout()"
       >
         <i class="bi bi-box-arrow-right"></i>
-
         <span>
           Cerrar sesión
         </span>
