@@ -72,13 +72,15 @@ CREATE TABLE IF NOT EXISTS agente (
 CREATE TABLE IF NOT EXISTS admin (
     num_identificacion VARCHAR(20) PRIMARY KEY,
     rol VARCHAR(20) NOT NULL DEFAULT 'ADMIN',
-    salario NUMERIC(4,7) NOT NULL DEFAULT 0,
+    salario NUMERIC(10,2) NOT NULL DEFAULT 0,
     horario VARCHAR(100),
 
     CONSTRAINT chk_admin_rol CHECK (rol = 'ADMIN'),
     CONSTRAINT fk_admin_persona FOREIGN KEY (num_identificacion, rol)
         REFERENCES persona(num_identificacion, rol) ON DELETE CASCADE
 );
+
+ALTER TABLE admin ALTER COLUMN salario TYPE NUMERIC(10,2);
 
 
 CREATE TABLE IF NOT EXISTS estado_evento (

@@ -5,43 +5,43 @@ INSERT INTO pais (nombre) VALUES
 
 INSERT INTO departamento (id_pais, nombre) VALUES
 -- Colombia
-(1, 'Valle del Cauca'),
-(1, 'Antioquia'),
-(1, 'Cundinamarca'),
-(1, 'Atlántico'),
-(1, 'Bolívar'),
-(1, 'Risaralda'),
+((SELECT id FROM pais WHERE nombre = 'Colombia'), 'Valle del Cauca'),
+((SELECT id FROM pais WHERE nombre = 'Colombia'), 'Antioquia'),
+((SELECT id FROM pais WHERE nombre = 'Colombia'), 'Cundinamarca'),
+((SELECT id FROM pais WHERE nombre = 'Colombia'), 'Atlántico'),
+((SELECT id FROM pais WHERE nombre = 'Colombia'), 'Bolívar'),
+((SELECT id FROM pais WHERE nombre = 'Colombia'), 'Risaralda'),
 
 -- México
-(2, 'Jalisco'),
+((SELECT id FROM pais WHERE nombre = 'México'), 'Jalisco'),
 
 -- Argentina
-(3, 'Buenos Aires');
+((SELECT id FROM pais WHERE nombre = 'Argentina'), 'Buenos Aires');
 
 INSERT INTO ciudad (id_departamento, nombre) VALUES
 -- Valle del Cauca
-(1, 'Cali'),
-(1, 'Palmira'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca'), 'Cali'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca'), 'Palmira'),
 
 -- Antioquia
-(2, 'Medellín'),
-(2, 'Envigado'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia'), 'Medellín'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia'), 'Envigado'),
 
 -- Cundinamarca
-(3, 'Bogotá'),
-(3, 'Soacha'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca'), 'Bogotá'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca'), 'Soacha'),
 
 -- Atlántico
-(4, 'Barranquilla'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Atlántico'), 'Barranquilla'),
 
 -- Bolívar
-(5, 'Cartagena'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Bolívar'), 'Cartagena'),
 
 -- Risaralda
-(6, 'Pereira'),
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Risaralda'), 'Pereira'),
 
 -- Jalisco
-(7, 'Guadalajara');
+((SELECT d.id FROM departamento d JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'México' AND d.nombre = 'Jalisco'), 'Guadalajara');
 
 INSERT INTO persona (
     num_identificacion,
@@ -54,28 +54,28 @@ INSERT INTO persona (
     id_ciudad
 ) VALUES
 -- Administradores
-('1001', 'CC', 'Carlos Ramírez', 'Calle 10 # 20-30', 'carlos@eventos.com', '123456', 'ADMIN', 1),
-('1002', 'CC', 'Laura Gómez', 'Carrera 15 # 30-40', 'laura@eventos.com', '123456', 'ADMIN', 3),
-('1003', 'CC', 'Andrés Torres', 'Calle 50 # 10-20', 'andres@eventos.com', '123456', 'ADMIN', 5),
+('1001', 'CC', 'Carlos Ramírez', 'Calle 10 # 20-30', 'carlos@eventos.com', '123456', 'ADMIN', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca' AND c.nombre = 'Cali')),
+('1002', 'CC', 'Laura Gómez', 'Carrera 15 # 30-40', 'laura@eventos.com', '123456', 'ADMIN', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia' AND c.nombre = 'Medellín')),
+('1003', 'CC', 'Andrés Torres', 'Calle 50 # 10-20', 'andres@eventos.com', '123456', 'ADMIN', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca' AND c.nombre = 'Bogotá')),
 
 -- Agentes
-('2001', 'CC', 'Daniel Martínez', 'Calle 5 # 10-15', 'daniel@eventos.com', '123456', 'AGENTE', 1),
-('2002', 'CC', 'Mariana López', 'Carrera 20 # 15-25', 'mariana@eventos.com', '123456', 'AGENTE', 3),
-('2003', 'CC', 'Sebastián Castro', 'Calle 80 # 12-30', 'sebastian@eventos.com', '123456', 'AGENTE', 5),
-('2004', 'CC', 'Valentina Ruiz', 'Carrera 8 # 40-50', 'valentina@eventos.com', '123456', 'AGENTE', 7),
-('2005', 'CC', 'Felipe Herrera', 'Calle 25 # 15-20', 'felipe@eventos.com', '123456', 'AGENTE', 8),
+('2001', 'CC', 'Daniel Martínez', 'Calle 5 # 10-15', 'daniel@eventos.com', '123456', 'AGENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca' AND c.nombre = 'Cali')),
+('2002', 'CC', 'Mariana López', 'Carrera 20 # 15-25', 'mariana@eventos.com', '123456', 'AGENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia' AND c.nombre = 'Medellín')),
+('2003', 'CC', 'Sebastián Castro', 'Calle 80 # 12-30', 'sebastian@eventos.com', '123456', 'AGENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca' AND c.nombre = 'Bogotá')),
+('2004', 'CC', 'Valentina Ruiz', 'Carrera 8 # 40-50', 'valentina@eventos.com', '123456', 'AGENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Atlántico' AND c.nombre = 'Barranquilla')),
+('2005', 'CC', 'Felipe Herrera', 'Calle 25 # 15-20', 'felipe@eventos.com', '123456', 'AGENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Bolívar' AND c.nombre = 'Cartagena')),
 
 -- Clientes
-('3001', 'CC', 'Juan Pérez', 'Calle 12 # 10-20', 'juan@gmail.com', '123456', 'CLIENTE', 1),
-('3002', 'CC', 'Camila Rodríguez', 'Carrera 30 # 20-10', 'camila@gmail.com', '123456', 'CLIENTE', 3),
-('3003', 'CC', 'Mateo Sánchez', 'Calle 45 # 15-30', 'mateo@gmail.com', '123456', 'CLIENTE', 5),
-('3004', 'CC', 'Isabella Moreno', 'Carrera 10 # 25-40', 'isabella@gmail.com', '123456', 'CLIENTE', 7),
-('3005', 'CC', 'Santiago Díaz', 'Calle 20 # 30-15', 'santiago@gmail.com', '123456', 'CLIENTE', 8),
-('3006', 'CC', 'Sofía Vargas', 'Carrera 5 # 12-18', 'sofia@gmail.com', '123456', 'CLIENTE', 2),
-('3007', 'CC', 'Nicolás Jiménez', 'Calle 60 # 20-10', 'nicolas@gmail.com', '123456', 'CLIENTE', 4),
-('3008', 'CC', 'Gabriela Rojas', 'Carrera 18 # 35-20', 'gabriela@gmail.com', '123456', 'CLIENTE', 6),
-('3009', 'CC', 'Samuel Ortiz', 'Calle 40 # 10-30', 'samuel@gmail.com', '123456', 'CLIENTE', 9),
-('3010', 'CC', 'Valeria Mendoza', 'Carrera 12 # 15-25', 'valeria@gmail.com', '123456', 'CLIENTE', 10);
+('3001', 'CC', 'Juan Pérez', 'Calle 12 # 10-20', 'juan@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca' AND c.nombre = 'Cali')),
+('3002', 'CC', 'Camila Rodríguez', 'Carrera 30 # 20-10', 'camila@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia' AND c.nombre = 'Medellín')),
+('3003', 'CC', 'Mateo Sánchez', 'Calle 45 # 15-30', 'mateo@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca' AND c.nombre = 'Bogotá')),
+('3004', 'CC', 'Isabella Moreno', 'Carrera 10 # 25-40', 'isabella@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Atlántico' AND c.nombre = 'Barranquilla')),
+('3005', 'CC', 'Santiago Díaz', 'Calle 20 # 30-15', 'santiago@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Bolívar' AND c.nombre = 'Cartagena')),
+('3006', 'CC', 'Sofía Vargas', 'Carrera 5 # 12-18', 'sofia@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca' AND c.nombre = 'Palmira')),
+('3007', 'CC', 'Nicolás Jiménez', 'Calle 60 # 20-10', 'nicolas@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia' AND c.nombre = 'Envigado')),
+('3008', 'CC', 'Gabriela Rojas', 'Carrera 18 # 35-20', 'gabriela@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca' AND c.nombre = 'Soacha')),
+('3009', 'CC', 'Samuel Ortiz', 'Calle 40 # 10-30', 'samuel@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Risaralda' AND c.nombre = 'Pereira')),
+('3010', 'CC', 'Valeria Mendoza', 'Carrera 12 # 15-25', 'valeria@gmail.com', '123456', 'CLIENTE', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'México' AND d.nombre = 'Jalisco' AND c.nombre = 'Guadalajara'));
 
 INSERT INTO cliente (num_identificacion, puntos, publicidad) VALUES
 ('3001', 150, TRUE),
@@ -117,65 +117,65 @@ INSERT INTO evento (
 ) VALUES
 
 -- Eventos del agente 2001
-( '2001', 1, (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Concierto de Rock',
+( '2001', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca' AND c.nombre = 'Cali'), (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Concierto de Rock',
  'Arena Cañaveralejo', 5000,
  'Una noche de rock con las mejores bandas nacionales.',
  120000, '2026-11-20 18:00:00', '2026-11-20 23:00:00',
  'Ingreso desde las 6 PM', NULL),
 
-( '2001', 1, (SELECT id FROM estado_evento WHERE nombre = 'BOLETERIA'), 'Festival de Salsa',
+( '2001', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Valle del Cauca' AND c.nombre = 'Cali'), (SELECT id FROM estado_evento WHERE nombre = 'BOLETERIA'), 'Festival de Salsa',
  'Estadio Pascual Guerrero', 15000,
  'Festival de salsa con artistas nacionales e internacionales.',
  90000, '2026-12-10 18:00:00', '2026-12-10 23:59:00',
  'Evento para mayores de edad', NULL),
 
 -- Eventos del agente 2002
-( '2002', 3, (SELECT id FROM estado_evento WHERE nombre = 'BOLETERIA'), 'Concierto de Música Urbana',
+( '2002', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia' AND c.nombre = 'Medellín'), (SELECT id FROM estado_evento WHERE nombre = 'BOLETERIA'), 'Concierto de Música Urbana',
  'La Macarena', 8000,
  'Presentación de artistas del género urbano.',
  150000, '2026-11-15 17:00:00', '2026-11-15 23:00:00',
  'Puertas abiertas desde las 5 PM', NULL),
 
-( '2002', 3, (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Obra de Teatro',
+( '2002', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Antioquia' AND c.nombre = 'Medellín'), (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Obra de Teatro',
  'Teatro Metropolitano', 1000,
  'Presentación de una obra de teatro contemporáneo.',
  60000, '2026-11-25 19:00:00', '2026-11-25 21:30:00',
  'Duración aproximada de dos horas', NULL),
 
 -- Eventos del agente 2003
-( '2003', 5, (SELECT id FROM estado_evento WHERE nombre = 'VIVO'), 'Festival de Música Electrónica',
+( '2003', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca' AND c.nombre = 'Bogotá'), (SELECT id FROM estado_evento WHERE nombre = 'VIVO'), 'Festival de Música Electrónica',
  'Movistar Arena', 10000,
  'Festival de música electrónica con DJs internacionales.',
  200000, '2026-11-03 18:00:00', '2026-11-03 23:59:00',
  'No se permite el ingreso de alimentos', NULL),
 
-( '2003', 5, (SELECT id FROM estado_evento WHERE nombre = 'FINALIZADO'), 'Concierto Sinfónico',
+( '2003', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Cundinamarca' AND c.nombre = 'Bogotá'), (SELECT id FROM estado_evento WHERE nombre = 'FINALIZADO'), 'Concierto Sinfónico',
  'Teatro Colón', 1500,
  'Concierto de música clásica y sinfónica.',
  85000, '2026-10-15 19:00:00', '2026-10-15 22:00:00',
  'Vestimenta formal sugerida', NULL),
 
 -- Eventos del agente 2004
-( '2004', 7, (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Festival del Caribe',
+( '2004', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Atlántico' AND c.nombre = 'Barranquilla'), (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Festival del Caribe',
  'Estadio Metropolitano', 12000,
  'Festival cultural y musical del Caribe colombiano.',
  75000, '2026-12-15 17:00:00', '2026-12-15 23:00:00',
  'Evento al aire libre', NULL),
 
-( '2004', 7, (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Comedia en Vivo',
+( '2004', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Atlántico' AND c.nombre = 'Barranquilla'), (SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO'), 'Comedia en Vivo',
  'Teatro José Consuegra', 800,
  'Presentación de comediantes nacionales.',
  50000, '2026-12-05 19:00:00', '2026-12-05 21:00:00',
  'Ingreso permitido desde las 7 PM', NULL),
 
 -- Eventos del agente 2005
-( '2005', 8, (SELECT id FROM estado_evento WHERE nombre = 'CANCELADO'), 'Concierto de Música Tropical',
+( '2005', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Bolívar' AND c.nombre = 'Cartagena'), (SELECT id FROM estado_evento WHERE nombre = 'CANCELADO'), 'Concierto de Música Tropical',
  'Centro de Convenciones Cartagena', 3000,
  'Una noche de música tropical y baile.',
  110000, '2026-11-30 18:00:00', '2026-11-30 23:00:00',
  'Parqueadero disponible', 'Cancelacion administrativa del evento'),
 
-( '2005', 8, (SELECT id FROM estado_evento WHERE nombre = 'FINALIZADO'), 'Festival Gastronómico',
+( '2005', (SELECT c.id FROM ciudad c JOIN departamento d ON d.id = c.id_departamento JOIN pais p ON p.id = d.id_pais WHERE p.nombre = 'Colombia' AND d.nombre = 'Bolívar' AND c.nombre = 'Cartagena'), (SELECT id FROM estado_evento WHERE nombre = 'FINALIZADO'), 'Festival Gastronómico',
  'Plaza de la Aduana', 2000,
  'Experiencia gastronómica con restaurantes locales.',
  40000, '2026-10-20 10:00:00', '2026-10-20 18:00:00',
@@ -193,37 +193,37 @@ INSERT INTO reserva (
 ) VALUES
 
 -- Evento 1: Concierto de Rock
-('3001', 1, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-20 10:00:00', 240000, 2, 'Reserva confirmada', NULL),
-('3002', 1, (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-21 10:00:00', 120000, 1, 'Pendiente de pago', NULL),
-('3003', 1, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-22 10:00:00', 360000, 3, 'Pago realizado', NULL),
+('3001', (SELECT id FROM evento WHERE num_identificacion = '2001' AND nombre = 'Concierto de Rock'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-20 10:00:00', 240000, 2, 'Reserva confirmada', NULL),
+('3002', (SELECT id FROM evento WHERE num_identificacion = '2001' AND nombre = 'Concierto de Rock'), (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-21 10:00:00', 120000, 1, 'Pendiente de pago', NULL),
+('3003', (SELECT id FROM evento WHERE num_identificacion = '2001' AND nombre = 'Concierto de Rock'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-22 10:00:00', 360000, 3, 'Pago realizado', NULL),
 
 -- Evento 2: Festival de Salsa
-('3004', 2, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-23 10:00:00', 180000, 2, 'Reserva confirmada', NULL),
-('3005', 2, (SELECT id FROM estado_reserva WHERE nombre = 'CANCELADA'), '2026-10-24 10:00:00', 90000, 1, 'Cancelada por el cliente', 'Cancelacion solicitada por el cliente'),
-('3006', 2, (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-25 10:00:00', 270000, 3, 'Pendiente de pago', NULL),
+('3004', (SELECT id FROM evento WHERE num_identificacion = '2001' AND nombre = 'Festival de Salsa'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-23 10:00:00', 180000, 2, 'Reserva confirmada', NULL),
+('3005', (SELECT id FROM evento WHERE num_identificacion = '2001' AND nombre = 'Festival de Salsa'), (SELECT id FROM estado_reserva WHERE nombre = 'CANCELADA'), '2026-10-24 10:00:00', 90000, 1, 'Cancelada por el cliente', 'Cancelacion solicitada por el cliente'),
+('3006', (SELECT id FROM evento WHERE num_identificacion = '2001' AND nombre = 'Festival de Salsa'), (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-25 10:00:00', 270000, 3, 'Pendiente de pago', NULL),
 
 -- Evento 3: Concierto Urbano
-('3007', 3, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-26 10:00:00', 300000, 2, 'Pago realizado', NULL),
-('3008', 3, (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-27 10:00:00', 150000, 1, 'Pendiente de confirmación', NULL),
+('3007', (SELECT id FROM evento WHERE num_identificacion = '2002' AND nombre = 'Concierto de Música Urbana'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-26 10:00:00', 300000, 2, 'Pago realizado', NULL),
+('3008', (SELECT id FROM evento WHERE num_identificacion = '2002' AND nombre = 'Concierto de Música Urbana'), (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-27 10:00:00', 150000, 1, 'Pendiente de confirmación', NULL),
 
 -- Evento 4: Obra de Teatro
-('3009', 4, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-28 10:00:00', 120000, 2, 'Reserva confirmada', NULL),
-('3010', 4, (SELECT id FROM estado_reserva WHERE nombre = 'CANCELADA'), '2026-10-29 10:00:00', 60000, 1, 'Cancelación solicitada', 'Cancelacion solicitada por el cliente'),
+('3009', (SELECT id FROM evento WHERE num_identificacion = '2002' AND nombre = 'Obra de Teatro'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-28 10:00:00', 120000, 2, 'Reserva confirmada', NULL),
+('3010', (SELECT id FROM evento WHERE num_identificacion = '2002' AND nombre = 'Obra de Teatro'), (SELECT id FROM estado_reserva WHERE nombre = 'CANCELADA'), '2026-10-29 10:00:00', 60000, 1, 'Cancelación solicitada', 'Cancelacion solicitada por el cliente'),
 
 -- Evento 5: Festival Electrónico
-('3001', 5, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-30 10:00:00', 400000, 2, 'Pago realizado', NULL),
-('3002', 5, (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-30 11:00:00', 200000, 1, 'Pendiente de pago', NULL),
+('3001', (SELECT id FROM evento WHERE num_identificacion = '2003' AND nombre = 'Festival de Música Electrónica'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-30 10:00:00', 400000, 2, 'Pago realizado', NULL),
+('3002', (SELECT id FROM evento WHERE num_identificacion = '2003' AND nombre = 'Festival de Música Electrónica'), (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-10-30 11:00:00', 200000, 1, 'Pendiente de pago', NULL),
 
 -- Evento 7: Festival del Caribe
-('3003', 7, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-31 10:00:00', 150000, 2, 'Reserva confirmada', NULL),
-('3004', 7, (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-11-01 10:00:00', 75000, 1, 'Pendiente de pago', NULL),
+('3003', (SELECT id FROM evento WHERE num_identificacion = '2004' AND nombre = 'Festival del Caribe'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-31 10:00:00', 150000, 2, 'Reserva confirmada', NULL),
+('3004', (SELECT id FROM evento WHERE num_identificacion = '2004' AND nombre = 'Festival del Caribe'), (SELECT id FROM estado_reserva WHERE nombre = 'RESERVADA'), '2026-11-01 10:00:00', 75000, 1, 'Pendiente de pago', NULL),
 
 -- Evento 9: Concierto Tropical
-('3005', 9, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-15 10:00:00', 220000, 2, 'Reserva confirmada', NULL),
-('3006', 9, (SELECT id FROM estado_reserva WHERE nombre = 'CANCELADA'), '2026-10-16 10:00:00', 110000, 1, 'Cancelación por parte del cliente', 'Cancelacion solicitada por el cliente'),
+('3005', (SELECT id FROM evento WHERE num_identificacion = '2005' AND nombre = 'Concierto de Música Tropical'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-15 10:00:00', 220000, 2, 'Reserva confirmada', NULL),
+('3006', (SELECT id FROM evento WHERE num_identificacion = '2005' AND nombre = 'Concierto de Música Tropical'), (SELECT id FROM estado_reserva WHERE nombre = 'CANCELADA'), '2026-10-16 10:00:00', 110000, 1, 'Cancelación por parte del cliente', 'Cancelacion solicitada por el cliente'),
 
 -- Evento 10: Festival Gastronómico
-('3007', 10, (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-17 10:00:00', 80000, 2, 'Reserva confirmada', NULL);
+('3007', (SELECT id FROM evento WHERE num_identificacion = '2005' AND nombre = 'Festival Gastronómico'), (SELECT id FROM estado_reserva WHERE nombre = 'CONFIRMADA'), '2026-10-17 10:00:00', 80000, 2, 'Reserva confirmada', NULL);
 
 INSERT INTO persona_telefono (num_identificacion, telefono) VALUES
 ('1001', '3001234567'),
