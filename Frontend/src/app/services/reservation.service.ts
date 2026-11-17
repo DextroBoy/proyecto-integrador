@@ -7,8 +7,8 @@ import { API_BASE_URL } from './api-base-url';
 type ReservationPayload = Omit<Reservation, 'fecha' | 'evento'> & {
   fecha: string;
   evento: Omit<Reservation['evento'], 'fecha_inicio' | 'fecha_fin'> & {
-    fecha_inicio: string;
-    fecha_fin: string;
+    fecha_inicio: string | null;
+    fecha_fin: string | null;
   };
 };
 
@@ -18,8 +18,12 @@ function mapReservation(reservation: ReservationPayload): Reservation {
     fecha: new Date(`${reservation.fecha.slice(0, 10)}T12:00:00`),
     evento: {
       ...reservation.evento,
-      fecha_inicio: new Date(`${reservation.evento.fecha_inicio}T12:00:00`),
-      fecha_fin: new Date(`${reservation.evento.fecha_fin}T12:00:00`),
+      fecha_inicio: reservation.evento.fecha_inicio
+        ? new Date(`${reservation.evento.fecha_inicio.slice(0, 10)}T12:00:00`)
+        : null,
+      fecha_fin: reservation.evento.fecha_fin
+        ? new Date(`${reservation.evento.fecha_fin.slice(0, 10)}T12:00:00`)
+        : null,
     },
   };
 }

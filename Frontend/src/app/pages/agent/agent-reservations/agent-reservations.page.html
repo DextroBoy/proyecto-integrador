@@ -39,7 +39,7 @@
                 {{ reservation.evento.teatro }} · {{ reservation.evento.ciudad }}
               </small>
             </td>
-            <td>{{ reservation.entradas }}</td>
+            <td>{{ reservation.entradas ?? '—' }}</td>
             <td>{{ getMoney(reservation.total) }} COP</td>
             <td>{{ reservation.estado }}</td>
             <td>

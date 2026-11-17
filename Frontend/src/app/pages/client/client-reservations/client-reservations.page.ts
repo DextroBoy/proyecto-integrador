@@ -84,8 +84,8 @@ export class ClientReservationsPage {
     });
   }
 
-  getMoney(value: number): string {
-    return '$' + value.toLocaleString('es-CO');
+  getMoney(value: number | null): string {
+    return value === null ? '—' : '$' + value.toLocaleString('es-CO');
   }
 
 }

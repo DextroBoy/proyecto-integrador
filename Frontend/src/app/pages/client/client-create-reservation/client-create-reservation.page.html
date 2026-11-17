@@ -65,7 +65,7 @@
                 <i class="bi bi-people"></i>
                 <div>
                   <span class="event-detail__label">Capacidad</span>
-                  <strong>{{ event.capacidad }} espectadores</strong>
+                  <strong>{{ event.capacidad ?? 'No definida' }} espectadores</strong>
                 </div>
               </div>
 
@@ -91,6 +91,12 @@
             <p class="text-secondary">
               Selecciona la cantidad de entradas que deseas reservar.
             </p>
+
+            @if (!canReserve()) {
+              <div class="alert alert-warning" role="status">
+                {{ availabilityMessage() }}
+              </div>
+            }
 
             <form (submit)="reserve($event)">
               <div class="mb-4">
@@ -138,7 +144,7 @@
               <button
                 type="submit"
                 class="btn btn-primary reservation-form__submit w-100 mt-4"
-                [disabled]="submitting || reserved"
+                [disabled]="submitting || reserved || !canReserve()"
               >
                 @if (submitting) {
                   Procesando...

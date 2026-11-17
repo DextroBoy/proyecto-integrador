@@ -4,7 +4,6 @@ import { CustomError } from "../../../domain/errors/custom.error";
 import {
   ReservationActor,
   ReservationResponse,
-  ReservationRole,
   ReservationState,
   ReservationsModel,
 } from "./reservations.model";
@@ -25,18 +24,18 @@ interface ReservationInput {
 
 interface ExistingReservation {
   id: number;
-  identificacion: number;
+  num_identificacion: string;
   id_evento: number;
-  entradas: number;
+  entradas: number | null;
   estado: string;
   observacion: string | null;
-  agente_id: number;
+  agente_id: string;
 }
 
 interface EventData {
   id: number;
-  capacidad: number;
-  precio: number;
+  capacidad: number | null;
+  precio: string | null;
   estado: string;
 }
 
@@ -48,7 +47,10 @@ const RESERVATION_LIMIT = 10;
 const BOOKABLE_EVENT_STATES = new Set(["PROGRAMADO", "BOLETERIA"]);
 
 function actorId(actor: ReservationActor): number {
-  return positiveInteger(actor.identificacion, "La identificación del usuario");
+  if (!Number.isSafeInteger(actor.identificacion) || actor.identificacion < 1) {
+    throw CustomError.badRequest("La identificación del usuario debe ser un entero positivo.");
+  }
+  return actor.identificacion;
 }
 
 function validateActor(actor: ReservationActor): void {
@@ -56,6 +58,13 @@ function validateActor(actor: ReservationActor): void {
     throw CustomError.forbidden("El rol no puede gestionar reservas.");
   }
   actorId(actor);
+}
+
+function reservationInput(body: unknown): ReservationInput {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    throw CustomError.badRequest("El cuerpo de la solicitud no es válido.");
+  }
+  return body as ReservationInput;
 }
 
 function validateTicketCount(value: unknown): number {
@@ -78,14 +87,18 @@ function observationFrom(input: ReservationInput, previous?: string | null): str
 }
 
 function toDatabaseError(error: unknown): unknown {
+  if (!error || typeof error !== "object" || !("code" in error)) {
+    return error;
+  }
   const databaseError = error as DatabaseError;
   switch (databaseError.code) {
     case "23503":
-      return CustomError.badRequest("El cliente o el evento indicado no existe.");
+      return CustomError.badRequest("El cliente, evento o estado indicado no existe.");
     case "23514":
     case "23502":
     case "22P02":
     case "22003":
+    case "22001":
       return CustomError.badRequest("Los datos de la reserva no cumplen las restricciones.");
     case "23505":
       return CustomError.conflict("La reserva entra en conflicto con un registro existente.");
@@ -127,14 +140,11 @@ export class ReservationsService {
     if (actor.rol !== "CLIENTE") {
       throw CustomError.forbidden("Solo un cliente puede crear reservas.");
     }
-    if (!body || typeof body !== "object") {
-      throw CustomError.badRequest("El cuerpo de la solicitud no es válido.");
-    }
-
-    const input = body as ReservationInput;
-    const customerId = actorId(actor);
+    const input = reservationInput(body);
+    const customerId = String(actorId(actor));
     const eventId = positiveInteger(input.id_evento, "El id del evento");
     const tickets = validateTicketCount(input.entradas);
+    const observation = observationFrom(input);
     const client = await pool.connect();
     let transactionStarted = false;
     try {
@@ -142,7 +152,7 @@ export class ReservationsService {
       transactionStarted = true;
 
       const customer = await client.query(
-        "SELECT 1 FROM cliente WHERE identificacion = $1;",
+        "SELECT 1 FROM cliente WHERE num_identificacion = $1;",
         [customerId]
       );
       if (customer.rowCount === 0) {
@@ -157,14 +167,15 @@ export class ReservationsService {
       this.assertEventIsBookable(eventData);
       const reserved = await this.getReservedTickets(client, eventId);
       assertCapacity(eventData.capacidad, reserved, tickets);
+      const stateId = await this.getStateId(client, "RESERVADA");
 
       const inserted = await client.query<{ id: number }>(
         `INSERT INTO reserva (
-           identificacion, id_evento, estado, fecha, total, entradas, observacion
+           num_identificacion, id_evento, id_estado, total, entradas, observacion
          )
-         VALUES ($1, $2, 'RESERVADA', CURRENT_DATE, $3, $4, $5)
+         VALUES ($1, $2, $3, (SELECT precio * $4 FROM evento WHERE id = $2), $4, $5)
          RETURNING id;`,
-        [customerId, eventId, eventData.precio * tickets, tickets, observationFrom(input)]
+        [customerId, eventId, stateId, tickets, observation]
       );
       const id = inserted.rows[0]?.id;
       if (id === undefined) {
@@ -191,11 +202,8 @@ export class ReservationsService {
     actor: ReservationActor
   ): Promise<ReservationResponse> {
     validateActor(actor);
-    if (!body || typeof body !== "object") {
-      throw CustomError.badRequest("El cuerpo de la solicitud no es válido.");
-    }
     const reservationId = positiveInteger(id, "El id de la reserva");
-    const input = body as ReservationInput;
+    const input = reservationInput(body);
     const client = await pool.connect();
     let transactionStarted = false;
     try {
@@ -220,24 +228,25 @@ export class ReservationsService {
       if (!eventData) {
         throw CustomError.notFound("No se encontró el evento solicitado.");
       }
+      const stateId = await this.getStateId(client, stateCode(nextState));
       if (nextState !== "Cancelada") {
         this.assertEventIsBookable(eventData);
+        if (nextTickets === null) {
+          throw CustomError.conflict(
+            "La reserva no tiene una cantidad de entradas válida para confirmar."
+          );
+        }
         const reserved = await this.getReservedTickets(client, nextEventId, reservationId);
         assertCapacity(eventData.capacidad, reserved, nextTickets);
       }
 
       await client.query(
-        `UPDATE reserva
-         SET id_evento = $1, estado = $2, entradas = $3, total = $4, observacion = $5
-         WHERE id = $6;`,
-        [
-          nextEventId,
-          stateCode(nextState),
-          nextTickets,
-          eventData.precio * nextTickets,
-          observation,
-          reservationId,
-        ]
+        `UPDATE reserva r
+         SET id_evento = $1, id_estado = $2, entradas = $3,
+             total = e.precio * $4, observacion = $5
+         FROM evento e
+         WHERE r.id = $6 AND e.id = $1;`,
+        [nextEventId, stateId, nextTickets, nextTickets, observation, reservationId]
       );
       const response = await this.reservationsModel.getById(client, reservationId, actor);
       await client.query("COMMIT;");
@@ -281,9 +290,11 @@ export class ReservationsService {
     actor: ReservationActor
   ): Promise<ExistingReservation> {
     const result = await client.query<ExistingReservation>(
-      `SELECT r.id, r.identificacion, r.id_evento, r.entradas, r.estado,
-              r.observacion, e.identificacion AS agente_id
+      `SELECT r.id, r.num_identificacion, r.id_evento, r.entradas,
+              sr.nombre AS estado, r.observacion,
+              e.num_identificacion AS agente_id
        FROM reserva r
+       INNER JOIN estado_reserva sr ON sr.id = r.id_estado
        INNER JOIN evento e ON e.id = r.id_evento
        WHERE r.id = $1
        FOR UPDATE OF r;`,
@@ -294,8 +305,8 @@ export class ReservationsService {
       throw CustomError.notFound("No se encontró la reserva solicitada.");
     }
     if (
-      actor.rol === "CLIENTE" && reservation.identificacion !== actor.identificacion ||
-      actor.rol === "AGENTE" && reservation.agente_id !== actor.identificacion
+      actor.rol === "CLIENTE" && reservation.num_identificacion !== String(actor.identificacion) ||
+      actor.rol === "AGENTE" && reservation.agente_id !== String(actor.identificacion)
     ) {
       throw CustomError.notFound("No se encontró la reserva solicitada.");
     }
@@ -323,11 +334,12 @@ export class ReservationsService {
   private async lockEvents(client: PoolClient, ids: number[]): Promise<Map<number, EventData>> {
     const uniqueIds = [...new Set(ids)].sort((left, right) => left - right);
     const result = await client.query<EventData>(
-      `SELECT id, capacidad, precio, estado
-       FROM evento
-       WHERE id = ANY($1::integer[])
-       ORDER BY id
-       FOR UPDATE;`,
+      `SELECT e.id, e.capacidad, e.precio, se.nombre AS estado
+       FROM evento e
+       INNER JOIN estado_evento se ON se.id = e.id_estado
+       WHERE e.id = ANY($1::integer[])
+       ORDER BY e.id
+       FOR UPDATE OF e;`,
       [uniqueIds]
     );
     return new Map(result.rows.map((event) => [event.id, event]));
@@ -339,11 +351,12 @@ export class ReservationsService {
     excludingReservationId?: number
   ): Promise<number> {
     const result = await client.query<{ entradas: number }>(
-      `SELECT COALESCE(SUM(entradas), 0)::integer AS entradas
-       FROM reserva
-       WHERE id_evento = $1
-         AND estado <> 'CANCELADA'
-         AND ($2::integer IS NULL OR id <> $2);`,
+      `SELECT COALESCE(SUM(r.entradas), 0)::integer AS entradas
+       FROM reserva r
+       INNER JOIN estado_reserva sr ON sr.id = r.id_estado
+       WHERE r.id_evento = $1
+         AND sr.nombre <> 'CANCELADA'
+         AND ($2::integer IS NULL OR r.id <> $2);`,
       [eventId, excludingReservationId ?? null]
     );
     const row = result.rows[0];
@@ -353,9 +366,26 @@ export class ReservationsService {
     return row.entradas;
   }
 
-  private assertEventIsBookable(event: EventData): void {
-    if (!BOOKABLE_EVENT_STATES.has(event.estado)) {
+  private async getStateId(client: PoolClient, code: string): Promise<number> {
+    const result = await client.query<{ id: number }>(
+      "SELECT id FROM estado_reserva WHERE UPPER(nombre) = $1;",
+      [code]
+    );
+    const stateId = result.rows[0]?.id;
+    if (stateId === undefined) {
+      throw CustomError.internalServer(`No está configurado el estado de reserva ${code}.`);
+    }
+    return stateId;
+  }
+
+  private assertEventIsBookable(
+    event: EventData
+  ): asserts event is EventData & { capacidad: number; precio: string } {
+    if (!BOOKABLE_EVENT_STATES.has(event.estado.toUpperCase())) {
       throw CustomError.conflict("El evento no está disponible para reservar.");
+    }
+    if (event.capacidad === null || event.precio === null) {
+      throw CustomError.conflict("El evento no tiene capacidad o precio configurado.");
     }
   }
 

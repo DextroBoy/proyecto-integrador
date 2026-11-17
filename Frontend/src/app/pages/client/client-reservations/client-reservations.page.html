@@ -51,7 +51,7 @@
               </td>
 
               <td>{{ getDate(reservation.fecha) }}</td>
-              <td>{{ reservation.entradas }}</td>
+              <td>{{ reservation.entradas ?? '—' }}</td>
 
               <td>
                 <span class="reservation-total">{{ getMoney(reservation.total) }}</span>

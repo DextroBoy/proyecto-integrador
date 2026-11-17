@@ -7,9 +7,15 @@ const RESERVATION_STATE_CODES: Record<string, ReservationState> = {
   CANCELADA: "Cancelada",
 };
 
+const MAX_POSTGRES_INTEGER = 2_147_483_647;
+
 export function positiveInteger(value: unknown, field: string): number {
-  const parsed = typeof value === "number" ? value : Number(value);
-  if (!Number.isSafeInteger(parsed) || parsed < 1) {
+  const parsed = typeof value === "number"
+    ? value
+    : typeof value === "string" && /^\d+$/.test(value)
+      ? Number(value)
+      : Number.NaN;
+  if (!Number.isSafeInteger(parsed) || parsed < 1 || parsed > MAX_POSTGRES_INTEGER) {
     throw CustomError.badRequest(`${field} debe ser un entero positivo.`);
   }
   return parsed;

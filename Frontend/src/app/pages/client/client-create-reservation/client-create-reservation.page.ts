@@ -63,15 +63,21 @@ export class ClientCreateReservationPage implements OnInit {
     }
   }
 
-  getTotal(): number {
-    return this.event ? this.event.precio * this.quantity : 0;
+  getTotal(): number | null {
+    if (!this.event || this.event.precio === null) {
+      return null;
+    }
+    return this.event.precio * this.quantity;
   }
 
-  getMoney(value: number): string {
-    return '$' + value.toLocaleString('es-CO');
+  getMoney(value: number | null): string {
+    return value === null ? '—' : '$' + value.toLocaleString('es-CO');
   }
 
-  getDate(fecha: Date): string {
+  getDate(fecha: Date | null): string {
+    if (!fecha) {
+      return 'Fecha por definir';
+    }
     return fecha.toLocaleDateString('es-CO', {
       day: '2-digit',
       month: 'long',
@@ -82,6 +88,10 @@ export class ClientCreateReservationPage implements OnInit {
   reserve(submitEvent: SubmitEvent): void {
     submitEvent.preventDefault();
     if (!this.event || this.submitting) {
+      return;
+    }
+    if (!this.canReserve()) {
+      this.errorMessage = 'Este evento no tiene los datos necesarios para realizar una reserva.';
       return;
     }
 
@@ -98,6 +108,26 @@ export class ClientCreateReservationPage implements OnInit {
         this.submitting = false;
       },
     });
+  }
+
+  canReserve(): boolean {
+    return !!this.event &&
+      this.event.capacidad !== null &&
+      this.event.precio !== null &&
+      (this.event.estado === 'Programado' || this.event.estado === 'En Boleteria');
+  }
+
+  availabilityMessage(): string {
+    if (!this.event) {
+      return '';
+    }
+    if (this.event.estado !== 'Programado' && this.event.estado !== 'En Boleteria') {
+      return 'Este evento no está disponible para reservas.';
+    }
+    if (this.event.capacidad === null || this.event.precio === null) {
+      return 'No se puede reservar porque el evento no tiene capacidad o precio configurado.';
+    }
+    return '';
   }
 
 }

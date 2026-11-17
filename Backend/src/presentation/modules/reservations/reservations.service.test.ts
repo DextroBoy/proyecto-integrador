@@ -21,9 +21,17 @@ async function createFixture(): Promise<Fixture> {
   const agents: [number, number] = [firstId + 2, firstId + 3];
   const events: number[] = [];
   let countryId = 0;
-  let cityId = 0;
 
   try {
+    await pool.query(
+      `INSERT INTO estado_reserva (nombre) VALUES ('RESERVADA'), ('CONFIRMADA'), ('CANCELADA')
+       ON CONFLICT (nombre) DO NOTHING;`
+    );
+    await pool.query(
+      `INSERT INTO estado_evento (nombre)
+       VALUES ('PROGRAMADO'), ('BOLETERIA'), ('VIVO'), ('FINALIZADO'), ('CANCELADO')
+       ON CONFLICT (nombre) DO NOTHING;`
+    );
     const country = await pool.query<{ id: number }>(
       "INSERT INTO pais (nombre) VALUES ($1) RETURNING id;",
       [`Reservas test ${firstId}`]
@@ -37,32 +45,38 @@ async function createFixture(): Promise<Fixture> {
       "INSERT INTO ciudad (id_departamento, nombre) VALUES ($1, $2) RETURNING id;",
       [department.rows[0]!.id, `Ciudad test ${firstId}`]
     );
-    cityId = city.rows[0]!.id;
+    const cityId = city.rows[0]!.id;
 
     for (const [index, id] of [...clients, ...agents].entries()) {
       const role = index < 2 ? "CLIENTE" : "AGENTE";
       await pool.query(
-        `INSERT INTO persona (identificacion, nombre, direccion, email, clave, rol, id_ciudad)
-         VALUES ($1, $2, 'Dirección de prueba', $3, 'test', $4, $5);`,
+        `INSERT INTO persona (
+           num_identificacion, tipo_identificacion, nombre_completo, direccion,
+           correo_electronico, contrasena, rol, id_ciudad
+         )
+         VALUES ($1, 'CC', $2, 'Dirección de prueba', $3, 'test', $4, $5);`,
         [id, `Prueba ${id}`, `reservas-${id}@example.test`, role, cityId]
       );
       await pool.query(
-        `INSERT INTO ${role === "CLIENTE" ? "cliente" : "agente"} (identificacion)
+        `INSERT INTO ${role === "CLIENTE" ? "cliente" : "agente"} (num_identificacion)
          VALUES ($1);`,
         [id]
       );
     }
 
+    const eventState = await pool.query<{ id: number }>(
+      "SELECT id FROM estado_evento WHERE nombre = 'PROGRAMADO';"
+    );
     for (const agentId of agents) {
       const result = await pool.query<{ id: number }>(
         `INSERT INTO evento (
-           identificacion, id_ciudad, nombre, teatro, capacidad, descripcion,
-           precio, fecha_inicio, fecha_fin, estado
+           num_identificacion, id_ciudad, id_estado, nombre, teatro, capacidad,
+           descripcion, precio, fecha_hora_inicio, fecha_hora_fin_estimada
          )
-           VALUES ($1, $2, 'Evento de prueba', 'Teatro de prueba', 4, 'Prueba', 1000,
-                   CURRENT_DATE + 10, CURRENT_DATE + 10, 'PROGRAMADO')
+         VALUES ($1, $2, $3, 'Evento de prueba', 'Teatro de prueba', 4, 'Prueba',
+                 1250.25, CURRENT_DATE + 10, CURRENT_DATE + 11)
          RETURNING id;`,
-          [agentId, cityId]
+        [agentId, cityId, eventState.rows[0]!.id]
       );
       const eventId = result.rows[0]?.id;
       assert.ok(eventId);
@@ -83,8 +97,8 @@ async function createFixture(): Promise<Fixture> {
 async function cleanup(data: Fixture): Promise<void> {
   await pool.query("DELETE FROM evento WHERE id = ANY($1::integer[]);", [data.events]);
   await pool.query(
-    "DELETE FROM persona WHERE identificacion = ANY($1::integer[]);",
-    [[...data.clients, ...data.agents]]
+    "DELETE FROM persona WHERE num_identificacion = ANY($1::text[]);",
+    [[...data.clients, ...data.agents].map(String)]
   );
   if (data.countryId > 0) {
     await pool.query("DELETE FROM pais WHERE id = $1;", [data.countryId]);
@@ -122,7 +136,7 @@ test("enforces capacity on create and update, recalculates totals, and releases 
   const customer = actor(customerId, "CLIENTE");
 
   const reservation = await service.create({ id_evento: eventId, entradas: 3 }, customer);
-  assert.equal(reservation.total, 3000);
+  assert.equal(reservation.total, 3750.75);
   await assert.rejects(
     service.create({ id_evento: eventId, entradas: 2 }, customer),
     expectStatus(409)
@@ -134,11 +148,25 @@ test("enforces capacity on create and update, recalculates totals, and releases 
 
   const updated = await service.update(reservation.codigo, { entradas: 4 }, customer);
   assert.equal(updated.entradas, 4);
-  assert.equal(updated.total, 4000);
+  assert.equal(updated.total, 5001);
   await service.update(reservation.codigo, { estado: "Cancelada" }, customer);
 
   const replacement = await service.create({ id_evento: eventId, entradas: 4 }, customer);
   assert.equal(replacement.entradas, 4);
+});
+
+test("serializes concurrent bookings against the event capacity", async () => {
+  assert.ok(fixture);
+  const [clientId] = fixture.clients;
+  const [eventId] = fixture.events;
+  const results = await Promise.allSettled([
+    service.create({ id_evento: eventId, entradas: 3 }, actor(clientId, "CLIENTE")),
+    service.create({ id_evento: eventId, entradas: 3 }, actor(clientId, "CLIENTE")),
+  ]);
+  assert.equal(results.filter((result) => result.status === "fulfilled").length, 1);
+  const rejected = results.find((result) => result.status === "rejected");
+  assert.ok(rejected && rejected.status === "rejected");
+  assert.ok(expectStatus(409)(rejected.reason));
 });
 
 test("filters reservations for the authenticated client and agent event ownership", async () => {
@@ -178,7 +206,7 @@ test("filters reservations for the authenticated client and agent event ownershi
 test("validates states, restricts agent updates, and permits scoped state changes", async () => {
   assert.ok(fixture);
   const [clientId] = fixture.clients;
-  const [agentId] = fixture.agents;
+  const [agentId, otherAgentId] = fixture.agents;
   const [eventId] = fixture.events;
   const reservation = await service.create(
     { id_evento: eventId, entradas: 1 },
@@ -190,8 +218,16 @@ test("validates states, restricts agent updates, and permits scoped state change
     expectStatus(400)
   );
   await assert.rejects(
+    service.update(reservation.codigo, { estado: "CONFIRMADA" }, actor(clientId, "CLIENTE")),
+    expectStatus(403)
+  );
+  await assert.rejects(
     service.update(reservation.codigo, { entradas: 2 }, actor(agentId, "AGENTE")),
     expectStatus(400)
+  );
+  await assert.rejects(
+    service.update(reservation.codigo, { estado: "CONFIRMADA" }, actor(otherAgentId, "AGENTE")),
+    expectStatus(404)
   );
 
   const updated = await service.update(
@@ -200,6 +236,31 @@ test("validates states, restricts agent updates, and permits scoped state change
     actor(agentId, "AGENTE")
   );
   assert.equal(updated.estado, "Confirmada");
+});
+
+test("validates ticket counts and reports missing events", async () => {
+  assert.ok(fixture);
+  const [clientId] = fixture.clients;
+  const customer = actor(clientId, "CLIENTE");
+  await assert.rejects(
+    service.create({ id_evento: fixture.events[0], entradas: 0 }, customer),
+    expectStatus(400)
+  );
+  await assert.rejects(
+    service.create({ id_evento: 2147483648, entradas: 1 }, customer),
+    expectStatus(400)
+  );
+  await assert.rejects(
+    service.create({ id_evento: 2147483647, entradas: 1 }, customer),
+    expectStatus(404)
+  );
+  await assert.rejects(
+    service.create(
+      { id_evento: fixture.events[0], entradas: 1 },
+      actor(2147483647, "CLIENTE")
+    ),
+    expectStatus(403)
+  );
 });
 
 test("deletes only reservations visible to the acting client or event agent", async () => {
